@@ -1,10 +1,164 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="id">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8" />
   <title>STB & Dismantle Reporting</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
-<body>
-  <h1>Welcome to STB & Dismantle Reporting System</h1>
+<body class="bg-gray-50 text-gray-800 font-sans">
+  <header class="bg-red-600 text-white py-6 shadow">
+    <div class="max-w-6xl mx-auto px-4 flex justify-between items-center">
+      <div>
+        <h1 class="text-3xl font-bold">STB & Dismantle Reporting</h1>
+        <p class="text-sm mt-1">Sistem penggabungan & ringkasan laporan harian Telkom Akses</p>
+      </div>
+      <nav class="space-x-4">
+        <a href="/" class="hover:underline font-bold">Home</a>
+        <a href="/upload" class="hover:underline">Upload</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="max-w-7xl mx-auto px-4 py-8">
+
+    <!-- Ringkasan Dashboard -->
+    <section class="grid md:grid-cols-2 gap-6 mb-10">
+      <div class="bg-white shadow rounded p-4">
+        <h3 class="text-lg font-semibold text-red-600">Total Replacement Hari Ini</h3>
+        <p class="text-3xl font-bold">123</p>
+      </div>
+      <div class="bg-white shadow rounded p-4">
+        <h3 class="text-lg font-semibold text-red-600">Total Dismantle Hari Ini</h3>
+        <p class="text-3xl font-bold">87</p>
+      </div>
+    </section>
+
+    <!-- Grafik Mingguan -->
+    <section class="mb-10">
+      <h2 class="text-xl font-bold mb-4 text-gray-700">Grafik Mingguan</h2>
+      <canvas id="weeklyChart" height="100"></canvas>
+    </section>
+
+    <!-- Tabel Replacement -->
+    <section class="bg-white shadow rounded-lg p-6 mt-10">
+      <h2 class="text-2xl font-bold text-yellow-500 mb-4">PROGRES HARIAN REPLACEMENT STB (170K)</h2>
+
+      <div class="overflow-x-auto">
+        <div class="inline-block min-w-full align-middle">
+          <div class="overflow-hidden border border-black rounded-lg">
+            <table class="table-auto min-w-full text-sm text-center border-collapse">
+              <thead>
+                <tr class="bg-yellow-200 font-bold text-xs text-black">
+                  <th colspan="5" class="border border-black px-2 py-1 bg-green-600 text-white">TOTAL TEKNISI</th>
+                  <th colspan="{{ tanggal_list|length }}" class="border border-black px-2 py-1 bg-yellow-300 text-black text-center">
+                    Update: {{ waktu_update }} WIB
+                  </th>
+                  <th colspan="3" class="border border-black px-2 py-1 bg-orange-400">-</th>
+                </tr>
+                <tr class="bg-yellow-300 font-bold text-xs text-black">
+                  <th class="border border-black bg-white px-2 py-1 sticky left-0 z-10">JUMLAH</th>
+                  <th class="border border-black bg-green-300 px-2 py-1 sticky left-[4rem] z-10">SERVICE AREA</th>
+                  <th class="border border-black bg-green-300 px-2 py-1 sticky left-[8rem] z-10">STO</th>
+                  <th class="border border-black bg-blue-400 text-white px-2 py-1 sticky left-[12rem] z-10">SALDO AWAL</th>
+                  <th class="border border-black bg-orange-300 px-2 py-1 sticky left-[16rem] z-10">ASSIGN</th>
+
+                  {% for tgl in tanggal_list %}
+                  <th class="border border-black bg-red-600 text-white px-2 py-1">{{ tgl }}</th>
+                  {% endfor %}
+
+                  <th class="border border-black bg-orange-300 px-2 py-1 sticky right-[12rem] z-10">Total Berhasil</th>
+                  <th class="border border-black bg-orange-300 px-2 py-1 sticky right-[8rem] z-10">Kendala</th>
+                  <th class="border border-black bg-orange-300 px-2 py-1 sticky right-[4rem] z-10">SISA SALDO</th>
+                </tr>
+              </thead>
+              <tbody class="bg-white">
+                <tr class="hover:bg-gray-100">
+                  <td class="border px-2 py-1 sticky left-0 bg-white">4</td>
+                  <td class="border px-2 py-1 sticky left-[4rem] bg-white">BOGOR</td>
+                  <td class="border px-2 py-1 sticky left-[8rem] bg-white">BGT</td>
+                  <td class="border px-2 py-1 sticky left-[12rem] bg-white">120</td>
+                  <td class="border px-2 py-1 sticky left-[16rem] bg-white">50</td>
+                  {% for i in tanggal_list %}
+                  <td class="border px-1 py-1">0</td>
+                  {% endfor %}
+                  <td class="border px-2 py-1 sticky right-[12rem] bg-white font-semibold">10</td>
+                  <td class="border px-2 py-1 sticky right-[8rem] bg-white">2</td>
+                  <td class="border px-2 py-1 sticky right-[4rem] bg-white font-semibold">108</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tabel Dismantle -->
+      <div class="mt-8 overflow-x-auto border border-black rounded-lg shadow">
+        <table class="min-w-full text-sm text-center border-collapse">
+          <thead>
+            <tr class="text-xs font-bold text-black">
+              <th class="bg-cyan-600 border border-black px-2 py-1">SERVICE AREA</th>
+              <th class="bg-sky-400 border border-black px-2 py-1">TOTAL VISIT<br>HI</th>
+              <th class="bg-lime-400 border border-black px-2 py-1">REPLACE<br>HI</th>
+              <th class="bg-rose-400 border border-black px-2 py-1">KENDALA<br>HI</th>
+              <th class="bg-orange-400 border border-black px-2 py-1">SISA<br>ASSIGN</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for area, sisa in dismantle_data %}
+            <tr>
+              <td class="border px-2 py-1">{{ area }}</td>
+              <td class="bg-red-200 border px-2 py-1">0</td>
+              <td class="bg-red-200 border px-2 py-1">0</td>
+              <td class="bg-red-200 border px-2 py-1">0</td>
+              <td class="border px-2 py-1">{{ sisa }}</td>
+            </tr>
+            {% endfor %}
+            <tr class="text-black font-bold">
+              <td class="bg-cyan-600 border">TOTAL</td>
+              <td class="bg-sky-400">0</td>
+              <td class="bg-lime-400">0</td>
+              <td class="bg-rose-400">0</td>
+              <td class="bg-orange-400 text-black">195</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+  </main>
+
+  <footer class="text-center text-sm text-gray-500 mt-12 py-4">
+    &copy; 2025 Telkom Akses Reporting System
+  </footer>
+
+  <script>
+    const ctx = document.getElementById('weeklyChart').getContext('2d');
+    new Chart(ctx, {
+      type: 'bar',
+      data: {
+        labels: ['Sen', 'Sel', 'Rab', 'Kam', 'Jum', 'Sab', 'Min'],
+        datasets: [
+          {
+            label: 'Replacement',
+            backgroundColor: '#DC2626',
+            data: [20, 35, 40, 30, 60, 50, 70]
+          },
+          {
+            label: 'Dismantle',
+            backgroundColor: '#4B5563',
+            data: [15, 30, 25, 20, 45, 40, 50]
+          }
+        ]
+      },
+      options: {
+        responsive: true,
+        scales: {
+          y: { beginAtZero: true }
+        }
+      }
+    });
+  </script>
 </body>
 </html>
