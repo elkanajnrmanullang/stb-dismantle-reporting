@@ -1,7 +1,9 @@
-venv/
 __pycache__/
 *.pyc
-*.xlsx
-uploads/
-outputs/
 .env
+*.xlsx
+instance/
+.vscode/
+*.db
+*.sqlite3
+static/files/*

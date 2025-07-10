@@ -1,0 +1,98 @@
+/* Style global */
+body {
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* === TABEL PROGRES DISMANTLE === */
+.table-dismantle {
+  border-collapse: collapse;
+  width: 100%;
+  table-layout: fixed;
+  font-size: 14px;
+}
+
+th,
+td {
+  white-space: nowrap;
+  text-align: center;
+  vertical-align: middle;
+}
+
+.table-dismantle th,
+.table-dismantle td {
+  border: 1px solid black;
+  padding: 4px 6px;
+  text-align: center;
+  white-space: nowrap;
+}
+
+/* Header besar */
+.table-dismantle thead tr:first-child th {
+  background-color: #3b82f6; /* biru */
+  color: white;
+  font-weight: bold;
+}
+
+/* Sub header */
+.table-dismantle thead tr:nth-child(2) th {
+  font-weight: bold;
+  background-color: #ffffff;
+  color: black;
+}
+
+/* Warna khusus kolom */
+.th-service-area,
+.th-sto {
+  background-color: #a7f3d0; /* hijau muda */
+}
+
+.th-mei {
+  background-color: #fde68a; /* kuning muda */
+}
+
+.th-awal {
+  background-color: #fcd34d; /* orange muda */
+}
+
+.th-progress {
+  background-color: #67e8f9; /* cyan muda */
+}
+
+.th-tanggal {
+  background-color: #dc2626; /* merah */
+  color: white;
+}
+
+.th-berhasil {
+  background-color: #4ade80; /* hijau */
+}
+
+.th-kendala {
+  background-color: #f97316; /* orange */
+}
+
+.th-sisa {
+  background-color: #fb923c; /* orange terang */
+  color: white;
+}
+
+/* Baris data */
+.table-dismantle tbody tr td {
+  background-color: #ffffff;
+}
+
+/* Responsif horizontal scroll */
+.table-container {
+  overflow-x: auto;
+  margin-top: 1rem;
+  border: 1px solid #ccc;
+}
+
+/* Waktu update */
+.update-time {
+  text-align: right;
+  font-size: 0.875rem;
+  margin-top: 0.5rem;
+  font-style: italic;
+  color: #555;
+}

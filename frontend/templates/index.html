@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <title>STB & Dismantle Reporting</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <!-- Tailwind CDN -->
+    <link
+      href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css"
+      rel="stylesheet"
+    />
+
+    <!-- Custom CSS -->
+    <link
+      href="{{ url_for('static', filename='css/style.css') }}"
+      rel="stylesheet"
+    />
+
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  </head>
+  <body class="bg-gray-50 text-gray-800 font-sans">
+    <header class="bg-red-600 text-white py-6 shadow">
+      <div class="max-w-6xl mx-auto px-4 flex justify-between items-center">
+        <div>
+          <h1 class="text-3xl font-bold">STB & Dismantle Reporting</h1>
+          <p class="text-sm mt-1">
+            Sistem penggabungan & ringkasan laporan harian Telkom Akses
+          </p>
+        </div>
+        <nav class="space-x-4">
+          <a href="/" class="hover:underline font-bold">Home</a>
+          <a href="/upload" class="hover:underline">Upload</a>
+        </nav>
+      </div>
+    </header>
+
+    <main class="max-w-7xl mx-auto px-4 py-8">
+      <!-- Ringkasan Dashboard -->
+      <section class="grid md:grid-cols-2 gap-6 mb-10">
+        <div class="bg-white shadow rounded p-4">
+          <h3 class="text-lg font-semibold text-red-600">
+            Total Replacement Hari Ini
+          </h3>
+          <p class="text-3xl font-bold">123</p>
+        </div>
+        <div class="bg-white shadow rounded p-4">
+          <h3 class="text-lg font-semibold text-red-600">
+            Total Dismantle Hari Ini
+          </h3>
+          <p class="text-3xl font-bold">87</p>
+        </div>
+      </section>
+
+      <!-- Grafik Mingguan -->
+      <section class="mb-10">
+        <h2 class="text-xl font-bold mb-4 text-gray-700">Grafik Mingguan</h2>
+        <canvas id="weeklyChart" height="100"></canvas>
+      </section>
+
+      <!-- PROGRES HARIAN -->
+      <section class="bg-white shadow rounded p-4 mt-8">
+        <p class="text-sm text-right mt-2 text-gray-600 italic">
+          Update terakhir: {{ waktu_update }}
+        </p>
+        <h1 class="text-xl font-bold mb-5 text-gray-700 border-b">
+          DASHBOARD DISMANTLE
+        </h1>
+        
+        <div class="overflow-auto">
+          <h3 class="text-xl mb-4 text-gray-700">
+            Progres Harian Collect Dismantle
+          </h3>
+          <table
+            class="min-w-full text-sm border border-black text-center whitespace-nowrap"
+          >
+            <thead class="text-xs">
+              <!-- Row 1 -->
+              <tr>
+                <th
+                  colspan="3"
+                  class="bg-red-300 border border-black px-2 py-1 w-[150px]"
+                >
+                  TOTAL TEKNISI
+                </th>
+                <th
+                  colspan="2"
+                  class="bg-cyan-200 border border-black px-2 py-1 w-[180px]"
+                >
+                  DISMANTLE
+                </th>
+                <th
+                  class="bg-blue-800 text-white border border-black px-2 py-1 w-[70px]"
+                >
+                  SALDO
+                </th>
+                <th
+                  colspan="32"
+                  class="bg-cyan-200 border border-black px-1 py-1"
+                >
+                  PROGRES
+                </th>
+              </tr>
+
+              <!-- Row 2 -->
+              <tr>
+                <th class="bg-white border border-black px-2 py-1">JUMLAH</th>
+                <th class="bg-green-200 border border-black px-2 py-1">
+                  SERVICE AREA
+                </th>
+                <th class="bg-green-300 border border-black px-2 py-1">STO</th>
+                <th class="bg-yellow-200 border border-black px-2 py-1">MEI</th>
+                <th class="bg-yellow-200 border border-black px-2 py-1">MEI</th>
+                <th class="bg-blue-800 text-white order-black px-2 py-1">
+                  AWAL
+                </th>
+                <th class="bg-cyan-100 border border-black px-2 py-1">
+                  PROGRES
+                </th>
+
+                {% for tgl in tanggal_list %}
+                <th
+                  class="bg-red-600 text-white border border-black px-2 py-1 w-[36px]"
+                >
+                  {{ tgl }}
+                </th>
+                {% endfor %}
+
+                <th class="bg-green-200 border border-black px-2 py-1 w-[60px]">
+                  Berhasil
+                </th>
+                <th
+                  class="bg-orange-300 border border-black px-2 py-1 w-[60px]"
+                >
+                  Kendala
+                </th>
+                <th
+                  class="bg-orange-500 border border-black px-2 py-1 w-[80px]"
+                >
+                  SISA SALDO
+                </th>
+              </tr>
+            </thead>
+
+            <tbody class="text-sm">
+              <tr>
+                <td class="border border-black px-2 py-1">5</td>
+                <td class="border border-black px-2 py-1">BOGOR</td>
+                <td class="border border-black px-2 py-1">BGR</td>
+                <td class="border border-black px-2 py-1">20</td>
+                <td class="border border-black px-2 py-1">2</td>
+                <td class="border border-black px-2 py-1">18</td>
+                <td class="border border-black px-2 py-1">0</td>
+                {% for tgl in tanggal_list %}
+                <td class="border border-black px-1 py-1">0</td>
+                {% endfor %}
+                <td class="border border-black px-2 py-1">10</td>
+                <td class="border border-black px-2 py-1">2</td>
+                <td class="border border-black px-2 py-1">6</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="overflow-auto mt-8">
+          <h3 class="text-xl  mb-4 text-gray-700">
+            Data Update Kendala Dismantle
+          </h3>
+          <table
+            class="min-w-full text-sm border border-black text-center whitespace-nowrap"
+          >
+            <thead class="text-xs">
+              <!-- Row 1 -->
+              <tr>
+                <th
+                  colspan="3"
+                  class="bg-red-300 border border-black px-2 py-1 w-[150px]"
+                >
+                  TOTAL TEKNISI
+                </th>
+                <th
+                  colspan="2"
+                  class="bg-cyan-200 border border-black px-2 py-1 w-[180px]"
+                >
+                  DISMANTLE
+                </th>
+                <th
+                  class="bg-blue-800 text-white border border-black px-2 py-1 w-[70px]"
+                >
+                  SALDO
+                </th>
+                <th
+                  colspan="32"
+                  class="bg-cyan-200 border border-black px-1 py-1"
+                >
+                  PROGRES
+                </th>
+              </tr>
+
+              <!-- Row 2 -->
+              <tr>
+                <th class="bg-white border border-black px-2 py-1">JUMLAH</th>
+                <th class="bg-green-200 border border-black px-2 py-1">
+                  SERVICE AREA
+                </th>
+                <th class="bg-green-300 border border-black px-2 py-1">STO</th>
+                <th class="bg-yellow-200 border border-black px-2 py-1">MEI</th>
+                <th class="bg-yellow-200 border border-black px-2 py-1">MEI</th>
+                <th class="bg-blue-800 text-white order-black px-2 py-1">
+                  AWAL
+                </th>
+                <th class="bg-cyan-100 border border-black px-2 py-1">
+                  PROGRES
+                </th>
+
+                {% for tgl in tanggal_list %}
+                <th
+                  class="bg-red-600 text-white border border-black px-2 py-1 w-[36px]"
+                >
+                  {{ tgl }}
+                </th>
+                {% endfor %}
+
+                <th
+                  class="bg-orange-300 border border-black px-2 py-1 w-[60px]"
+                >
+                  Kendala
+                </th>
+                <th class="bg-green-200 border border-black px-2 py-1 w-[60px]">
+                  Berhasil
+                </th>
+                <th
+                  class="bg-orange-500 border border-black px-2 py-1 w-[80px]"
+                >
+                  SISA SALDO
+                </th>
+              </tr>
+            </thead>
+
+            <tbody class="text-sm">
+              <tr>
+                <td class="border border-black px-2 py-1">5</td>
+                <td class="border border-black px-2 py-1">BOGOR</td>
+                <td class="border border-black px-2 py-1">BGR</td>
+                <td class="border border-black px-2 py-1">20</td>
+                <td class="border border-black px-2 py-1">2</td>
+                <td class="border border-black px-2 py-1">18</td>
+                <td class="border border-black px-2 py-1">0</td>
+                {% for tgl in tanggal_list %}
+                <td class="border border-black px-1 py-1">0</td>
+                {% endfor %}
+                <td class="border border-black px-2 py-1">10</td>
+                <td class="border border-black px-2 py-1">2</td>
+                <td class="border border-black px-2 py-1">6</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- TABEL RINGKASAN KUNJUNGAN -->
+        <div class="overflow-auto mt-8">
+          <table
+            class="min-w-full text-sm border border-black text-center whitespace-nowrap"
+          >
+            <thead class="text-xs">
+              <tr>
+                <th
+                  rowspan="2"
+                  class="bg-cyan-400 border border-black px-4 py-2 align-middle"
+                >
+                  SERVICE AREA
+                </th>
+                <th
+                  colspan="1"
+                  class="bg-cyan-200 border border-black px-4 py-1"
+                >
+                  TOTAL VISIT
+                </th>
+                <th
+                  colspan="1"
+                  class="bg-green-200 border border-black px-4 py-1"
+                >
+                  DISMANTLE
+                </th>
+                <th
+                  colspan="1"
+                  class="bg-red-200 border border-black px-4 py-1"
+                >
+                  KENDALA
+                </th>
+                <th
+                  colspan="1"
+                  class="bg-orange-400 border border-black px-4 py-1"
+                >
+                  SISA
+                </th>
+              </tr>
+              <tr>
+                <th class="bg-yellow-50 border border-black px-4 py-1">HI</th>
+                <th class="bg-yellow-50 border border-black px-4 py-1">HI</th>
+                <th class="bg-yellow-50 border border-black px-4 py-1">HI</th>
+                <th
+                  class="bg-yellow-50 border border-black px-4 py-1 font-bold"
+                >
+                  ASSIGN
+                </th>
+              </tr>
+            </thead>
+          </table>
+        </div>
+      </section>
+    </main>
+
+    <footer class="text-center text-sm text-gray-500 mt-12 py-4">
+      &copy; 2025 Telkom Akses Reporting System
+    </footer>
+
+    <script src="{{ url_for('static', filename='js/chart.js') }}"></script>
+  </body>
+</html>
