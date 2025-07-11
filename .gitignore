@@ -1,10 +1,48 @@
+# Byte-compiled / optimized / DLL files
 __pycache__/
-*.pyc
-.env
-*.xlsx
+*.py[cod]
+*$py.class
+
+# Virtual environments
+venv/
+ENV/
+env/
+.venv/
+
+# Flask instance folder
 instance/
+
+# Editor folders/files
 .vscode/
+.idea/
+
+# OS-specific files
+.DS_Store
+Thumbs.db
+
+# SQLite and other local DBs
 *.db
 *.sqlite3
-static/files/*
-venv/
+
+# Excel & CSV files 
+*.xlsx
+*.xls
+*.csv
+
+# Flask upload folders or exported files
+static/files/
+static/exports/
+
+# Environment files
+.env
+.env.*
+
+# Python test cache
+.pytest_cache/
+.cache/
+
+# Log files
+*.log
+
+# Jupyter Notebook Checkpoints
+.ipynb_checkpoints/
