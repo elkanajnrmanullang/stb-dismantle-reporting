@@ -1,0 +1,11 @@
+<p class="text-sm text-right text-gray-600 italic">Update terakhir: {{ waktu_update }}</p>
+<h2 class="text-xl font-bold mb-4 text-gray-700 border-b">DASHBOARD DISMANTLE</h2>
+
+<!-- PROGRESS HARIAN DISMANTLE -->
+{% include "components/subtable_dismantle_progress.html" %}
+
+<!-- KENDALA DISMANTLE -->
+<div class="mt-8">{% include "components/subtable_dismantle_kendala.html" %}</div>
+
+<!-- RINGKASAN KUNJUNGAN DISMANTLE -->
+<div class="mt-8">{% include "components/subtable_dismantle_ringkasan.html" %}</div>

@@ -1,0 +1,86 @@
+<div class="overflow-auto">
+  <table
+    class="min-w-full text-sm border border-black text-center whitespace-nowrap"
+  >
+    <thead class="text-xs">
+      <tr>
+        <th
+          colspan="40"
+          class="bg-yellow-300 font-bold border border-black py-2 text-lg"
+        >
+          PROGRES HARIAN REPLACEMENT STB (170K)
+        </th>
+      </tr>
+      <tr>
+        <th rowspan="2" class="bg-red-300 border border-black px-2 py-1">
+          TOTAL TEKNISI
+        </th>
+        <th colspan="2" class="bg-yellow-200 border border-black px-2 py-1">
+          REPLACEMENT STB
+        </th>
+        <th
+          rowspan="2"
+          class="bg-blue-500 text-white border border-black px-2 py-1"
+        >
+          SALDO AWAL
+        </th>
+        <th rowspan="2" class="bg-sky-400 border border-black px-2 py-1">
+          ASSIGN
+        </th>
+        <th colspan="28" class="bg-cyan-200 border border-black px-1 py-1">
+          PROGRES
+        </th>
+        <th colspan="4" class="bg-cyan-300 border border-black px-2 py-1">
+          {{ waktu_update }}
+        </th>
+        <th rowspan="2" class="bg-green-300 border border-black px-2 py-1">
+          Total Berhasil
+        </th>
+        <th rowspan="2" class="bg-orange-300 border border-black px-2 py-1">
+          Kendala
+        </th>
+        <th rowspan="2" class="bg-orange-500 border border-black px-2 py-1">
+          SISA SALDO
+        </th>
+      </tr>
+      <tr>
+        <th class="bg-green-200 border border-black px-2 py-1">SERVICE AREA</th>
+        <th class="bg-green-300 border border-black px-2 py-1">STO</th>
+        {% for tgl in tanggal_list %}
+        <th
+          class="bg-red-600 text-white border border-black px-2 py-1 w-[36px]"
+        >
+          {{ tgl }}
+        </th>
+        {% endfor %}
+      </tr>
+    </thead>
+    <tbody class="text-sm">
+      {% for row in data_stb %}
+      <tr>
+        <td class="border border-black px-2 py-1">{{ row.teknisi }}</td>
+        <td class="border border-black px-2 py-1">{{ row.service_area }}</td>
+        <td class="border border-black px-2 py-1">{{ row.sto }}</td>
+        <td class="border border-black px-2 py-1">{{ row.saldo_awal }}</td>
+        <td class="border border-black px-2 py-1">{{ row.assign }}</td>
+        {% for val in row.progres_harian %}
+        <td class="border border-black px-1 py-1">{{ val }}</td>
+        {% endfor %}
+        <td class="border border-black px-2 py-1">{{ row.total_berhasil }}</td>
+        <td class="border border-black px-2 py-1">{{ row.kendala }}</td>
+        <td class="border border-black px-2 py-1">{{ row.sisa_saldo }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+    <tfoot class="text-sm font-semibold">
+      <tr>
+        <td class="border border-black bg-cyan-300 text-black">
+          {{ total_teknisi }}
+        </td>
+        {% for _ in range(39) %}
+        <td class="border border-black bg-black"></td>
+        {% endfor %}
+      </tr>
+    </tfoot>
+  </table>
+</div>

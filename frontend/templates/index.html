@@ -5,7 +5,14 @@
     <title>STB & Dismantle Reporting</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-    <!-- Tailwind CDN -->
+    <!-- Favicon -->
+    <link
+      rel="icon"
+      href="{{ url_for('static', filename='assets/icon.png') }}"
+      type="image/png"
+    />
+
+    <!-- Tailwind CSS CDN -->
     <link
       href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css"
       rel="stylesheet"
@@ -20,15 +27,25 @@
     <!-- Chart.js -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   </head>
+
   <body class="bg-gray-50 text-gray-800 font-sans">
+    <!-- Header -->
     <header class="bg-red-600 text-white py-6 shadow">
       <div class="max-w-6xl mx-auto px-4 flex justify-between items-center">
-        <div>
-          <h1 class="text-3xl font-bold">STB & Dismantle Reporting</h1>
-          <p class="text-sm mt-1">
-            Sistem penggabungan & ringkasan laporan harian Telkom Akses
-          </p>
+        <!-- Logo + Judul -->
+        <div class="flex items-center space-x-4">
+          <img
+            src="{{ url_for('static', filename='assets/logo.png') }}"
+            alt="Logo Telkom"
+            class="h-20 w-auto"
+          />
+          <div>
+            <h1 class="text-3xl font-bold">STB & Dismantle Reporting</h1>
+            <p class="text-sm mt-1">Sistem ringkasan laporan harian Telkom</p>
+          </div>
         </div>
+
+        <!-- Navigation -->
         <nav class="space-x-4">
           <a href="/" class="hover:underline font-bold">Home</a>
           <a href="/upload" class="hover:underline">Upload</a>
@@ -36,21 +53,11 @@
       </div>
     </header>
 
+    <!-- Main Content -->
     <main class="max-w-7xl mx-auto px-4 py-8">
-      <!-- Ringkasan Dashboard -->
+      <!-- Ringkasan Kartu -->
       <section class="grid md:grid-cols-2 gap-6 mb-10">
-        <div class="bg-white shadow rounded p-4">
-          <h3 class="text-lg font-semibold text-red-600">
-            Total Replacement Hari Ini
-          </h3>
-          <p class="text-3xl font-bold">123</p>
-        </div>
-        <div class="bg-white shadow rounded p-4">
-          <h3 class="text-lg font-semibold text-red-600">
-            Total Dismantle Hari Ini
-          </h3>
-          <p class="text-3xl font-bold">87</p>
-        </div>
+        {% include "components/card_summary.html" %}
       </section>
 
       <!-- Grafik Mingguan -->
@@ -59,592 +66,23 @@
         <canvas id="weeklyChart" height="100"></canvas>
       </section>
 
-      <!-- PROGRES HARIAN -->
+      <!-- Section Dismantle -->
       <section class="bg-white shadow rounded p-4 mt-8">
-        <p class="text-sm text-right mt-2 text-gray-600 italic">
-          Update terakhir: {{ waktu_update }}
-        </p>
-        <h1 class="text-xl font-bold mb-5 text-gray-700 border-b">
-          DASHBOARD DISMANTLE
-        </h1>
-
-        <div class="overflow-auto">
-          <table
-            class="min-w-full text-sm border border-black text-center whitespace-nowrap"
-          >
-            <thead class="text-xs">
-              <th
-                colspan="42"
-                class="bg-blue-600 font-bold border border-black py-2 text-lg"
-              >
-                PROGRESS HARIAN COLLECT DISMANTLE
-              </th>
-              <!-- Row 1 -->
-              <tr>
-                <th
-                  colspan="1"
-                  class="bg-red-300 border border-black px-2 py-1 w-[150px]"
-                >
-                  TOTAL TEKNISI
-                </th>
-                <th
-                  colspan="2"
-                  class="bg-cyan-200 border border-black px-2 py-1 w-[180px]"
-                >
-                  DISMANTLE
-                </th>
-                <th
-                  class="bg-black text-white border border-black px-2 py-1 w-[70px]"
-                >
-                  BERHASIL
-                </th>
-                <th
-                  class="bg-black text-white border border-black px-2 py-1 w-[70px]"
-                >
-                  KENDALA
-                </th>
-                <th
-                  class="bg-blue-800 text-white border border-black px-2 py-1 w-[70px]"
-                >
-                  SALDO
-                </th>
-                <th
-                  colspan="33"
-                  class="bg-neutral-400 border border-black px-1 py-1"
-                >
-                  PROGRES
-                </th>
-                <th
-                  colspan="3"
-                  class="bg-cyan-300 border border-black px-2 py-1"
-                >
-                  {{ waktu_update }}
-                </th>
-              </tr>
-
-              <!-- Row 2 -->
-              <tr>
-                <th class="bg-white border border-black px-2 py-1">JUMLAH</th>
-                <th class="bg-green-200 border border-black px-2 py-1">
-                  SERVICE AREA
-                </th>
-                <th class="bg-green-300 border border-black px-2 py-1">STO</th>
-                <th class="bg-yellow-200 border border-black px-2 py-1">MEI</th>
-                <th class="bg-yellow-200 border border-black px-2 py-1">MEI</th>
-                <th class="bg-blue-800 text-white order-black px-2 py-1">
-                  AWAL
-                </th>
-                <th class="bg-cyan-100 border border-black px-2 py-1">
-                  PROGRES
-                </th>
-
-                {% for tgl in tanggal_list %}
-                <th
-                  class="bg-red-600 text-white border border-black px-2 py-1 w-[36px]"
-                >
-                  {{ tgl }}
-                </th>
-                {% endfor %}
-
-                <th class="bg-green-200 border border-black px-2 py-1 w-[60px]">
-                  Berhasil
-                </th>
-                <th
-                  class="bg-orange-300 border border-black px-2 py-1 w-[60px]"
-                >
-                  Kendala
-                </th>
-                <th
-                  class="bg-orange-500 border border-black px-2 py-1 w-[80px]"
-                >
-                  SISA SALDO
-                </th>
-              </tr>
-            </thead>
-
-            <tbody class="text-sm">
-              <tr>
-                <td class="border border-black px-2 py-1">5</td>
-                <td class="border border-black px-2 py-1">BOGOR</td>
-                <td class="border border-black px-2 py-1">BGR</td>
-                <td class="border border-black px-2 py-1">20</td>
-                <td class="border border-black px-2 py-1">2</td>
-                <td class="border border-black px-2 py-1">18</td>
-                <td class="border border-black px-2 py-1">0</td>
-                {% for tgl in tanggal_list %}
-                <td class="border border-black px-1 py-1">0</td>
-                {% endfor %}
-                <td class="border border-black px-2 py-1">10</td>
-                <td class="border border-black px-2 py-1">2</td>
-                <td class="border border-black px-2 py-1">6</td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-
-        <div class="overflow-auto mt-8">
-          <table
-            class="min-w-full text-sm border border-black text-center whitespace-nowrap"
-          >
-            <thead class="text-xs">
-              <!-- Row 1 -->
-              <th
-                colspan="42"
-                class="bg-yellow-300 font-bold border border-black py-2 text-lg"
-              >
-                DATA UPDATE KENDALA DISMANTLE
-              </th>
-              <tr>
-                <th
-                  colspan="1"
-                  class="bg-red-300 border border-black px-2 py-1 w-[150px]"
-                >
-                  TOTAL TEKNISI
-                </th>
-                <th
-                  colspan="2"
-                  class="bg-cyan-200 border border-black px-2 py-1 w-[180px]"
-                >
-                  DISMANTLE
-                </th>
-                <th
-                  class="bg-black text-white border border-black px-2 py-1 w-[70px]"
-                >
-                  BERHASIL
-                </th>
-                <th
-                  class="bg-black text-white border border-black px-2 py-1 w-[70px]"
-                >
-                  KENDALA
-                </th>
-                <th
-                  class="bg-blue-800 text-white border border-black px-2 py-1 w-[70px]"
-                >
-                  SALDO
-                </th>
-                <th
-                  colspan="33"
-                  class="bg-cyan-200 border border-black px-1 py-1"
-                >
-                  PROGRES
-                </th>
-                <th
-                  colspan="3"
-                  class="bg-cyan-300 border border-black px-2 py-1"
-                >
-                  {{ waktu_update }}
-                </th>
-              </tr>
-
-              <!-- Row 2 -->
-              <tr>
-                <th class="bg-white border border-black px-2 py-1">JUMLAH</th>
-                <th class="bg-green-200 border border-black px-2 py-1">
-                  SERVICE AREA
-                </th>
-                <th class="bg-green-300 border border-black px-2 py-1">STO</th>
-                <th class="bg-yellow-200 border border-black px-2 py-1">MEI</th>
-                <th class="bg-yellow-200 border border-black px-2 py-1">MEI</th>
-                <th class="bg-blue-800 text-white order-black px-2 py-1">
-                  AWAL
-                </th>
-                <th class="bg-cyan-100 border border-black px-2 py-1">
-                  PROGRES
-                </th>
-
-                {% for tgl in tanggal_list %}
-                <th
-                  class="bg-red-600 text-white border border-black px-2 py-1 w-[36px]"
-                >
-                  {{ tgl }}
-                </th>
-                {% endfor %}
-
-                <th
-                  class="bg-orange-300 border border-black px-2 py-1 w-[60px]"
-                >
-                  Kendala
-                </th>
-                <th class="bg-green-200 border border-black px-2 py-1 w-[60px]">
-                  Berhasil
-                </th>
-                <th
-                  class="bg-orange-500 border border-black px-2 py-1 w-[80px]"
-                >
-                  SISA SALDO
-                </th>
-              </tr>
-            </thead>
-
-            <tbody class="text-sm">
-              <tr>
-                <td class="border border-black px-2 py-1">5</td>
-                <td class="border border-black px-2 py-1">BOGOR</td>
-                <td class="border border-black px-2 py-1">BGR</td>
-                <td class="border border-black px-2 py-1">20</td>
-                <td class="border border-black px-2 py-1">2</td>
-                <td class="border border-black px-2 py-1">18</td>
-                <td class="border border-black px-2 py-1">0</td>
-                {% for tgl in tanggal_list %}
-                <td class="border border-black px-1 py-1">0</td>
-                {% endfor %}
-                <td class="border border-black px-2 py-1">10</td>
-                <td class="border border-black px-2 py-1">2</td>
-                <td class="border border-black px-2 py-1">6</td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-
-        <!-- TABEL RINGKASAN KUNJUNGAN -->
-        <div class="overflow-auto mt-8">
-          <table
-            class="min-w-full text-sm border border-black text-center whitespace-nowrap"
-          >
-            <thead class="text-xs">
-              <tr>
-                <th
-                  rowspan="2"
-                  class="bg-cyan-400 border border-black px-4 py-2 align-middle"
-                >
-                  SERVICE AREA
-                </th>
-                <th
-                  colspan="1"
-                  class="bg-cyan-200 border border-black px-4 py-1"
-                >
-                  TOTAL VISIT
-                </th>
-                <th
-                  colspan="1"
-                  class="bg-green-200 border border-black px-4 py-1"
-                >
-                  DISMANTLE
-                </th>
-                <th
-                  colspan="1"
-                  class="bg-red-200 border border-black px-4 py-1"
-                >
-                  KENDALA
-                </th>
-                <th
-                  colspan="1"
-                  class="bg-orange-400 border border-black px-4 py-1"
-                >
-                  SISA
-                </th>
-              </tr>
-              <tr>
-                <th class="bg-yellow-50 border border-black px-4 py-1">HI</th>
-                <th class="bg-yellow-50 border border-black px-4 py-1">HI</th>
-                <th class="bg-yellow-50 border border-black px-4 py-1">HI</th>
-                <th
-                  class="bg-yellow-50 border border-black px-4 py-1 font-bold"
-                >
-                  ASSIGN
-                </th>
-              </tr>
-            </thead>
-          </table>
-        </div>
+        {% include "components/table_dismantle.html" %}
       </section>
 
-      <!-- SECTION: PROGRES HARIAN REPLACEMENT STB -->
+      <!-- Section Replacement STB -->
       <section class="bg-white shadow rounded p-4 mt-12">
-        <p class="text-sm text-right text-gray-600 italic">
-          Update terakhir: {{ waktu_update }}
-        </p>
-        <h2 class="text-xl font-bold mb-5 text-gray-700 border-b">
-          DASHBOARD REPLACE STB
-        </h2>
-
-        <div class="overflow-auto">
-          <table
-            class="min-w-full text-sm border border-black text-center whitespace-nowrap"
-          >
-            <thead class="text-xs">
-              <!-- Header Baris 1 -->
-              <tr>
-                <th
-                  colspan="40"
-                  class="bg-yellow-300 font-bold border border-black py-2 text-lg"
-                >
-                  PROGRES HARIAN REPLACEMENT STB (170K)
-                </th>
-              </tr>
-              <tr>
-                <th
-                  rowspan="2"
-                  class="bg-red-300 border border-black px-2 py-1"
-                >
-                  TOTAL TEKNISI
-                </th>
-                <th
-                  colspan="2"
-                  class="bg-yellow-200 border border-black px-2 py-1"
-                >
-                  REPLACEMENT STB
-                </th>
-                <th
-                  rowspan="2"
-                  class="bg-blue-500 text-white border border-black px-2 py-1"
-                >
-                  SALDO AWAL
-                </th>
-                <th
-                  rowspan="2"
-                  class="bg-sky-400 border border-black px-2 py-1"
-                >
-                  ASSIGN
-                </th>
-                <th
-                  colspan="28"
-                  class="bg-cyan-200 border border-black px-1 py-1"
-                >
-                  PROGRES
-                </th>
-                <th
-                  colspan="4"
-                  class="bg-cyan-300 border border-black px-2 py-1"
-                >
-                  {{ waktu_update }}
-                </th>
-                <th
-                  rowspan="2"
-                  class="bg-green-300 border border-black px-2 py-1"
-                >
-                  Total Berhasil
-                </th>
-                <th
-                  rowspan="2"
-                  class="bg-orange-300 border border-black px-2 py-1"
-                >
-                  Kendala
-                </th>
-                <th
-                  rowspan="2"
-                  class="bg-orange-500 border border-black px-2 py-1"
-                >
-                  SISA SALDO
-                </th>
-              </tr>
-
-              <!-- Header Baris 2 -->
-              <tr>
-                <th class="bg-green-200 border border-black px-2 py-1">
-                  SERVICE AREA
-                </th>
-                <th class="bg-green-300 border border-black px-2 py-1">STO</th>
-
-                {% for tgl in tanggal_list %}
-                <th
-                  class="bg-red-600 text-white border border-black px-2 py-1 w-[36px]"
-                >
-                  {{ tgl }}
-                </th>
-                {% endfor %}
-              </tr>
-            </thead>
-
-            <tbody class="text-sm">
-              <!-- Contoh baris data dummy -->
-              <tr>
-                <td class="border border-black px-2 py-1">18</td>
-                <td class="border border-black px-2 py-1">BOGOR</td>
-                <td class="border border-black px-2 py-1">BOO</td>
-                <td class="border border-black px-2 py-1">467</td>
-                <td class="border border-black px-2 py-1">2</td>
-                {% for i in range(32) %}
-                <td class="border border-black px-1 py-1">0</td>
-                {% endfor %}
-                <td class="border border-black px-2 py-1">46</td>
-                <td class="border border-black px-2 py-1">189</td>
-                <td class="border border-black px-2 py-1">230</td>
-              </tr>
-            </tbody>
-
-            <!-- FOOTER -->
-            <tfoot class="text-sm font-semibold">
-              <tr>
-                <!-- Kolom 1: jumlah total teknisi -->
-                <td
-                  class="border border-black bg-cyan-300 text-center text-black"
-                >
-                  269
-                </td>
-
-                <!-- Kolom 2 sampai 40: hitam polos -->
-                {% for _ in range(39) %}
-                <td class="border border-black bg-black"></td>
-                {% endfor %}
-              </tr>
-            </tfoot>
-          </table>
-        </div>
-        <!-- KENDALA REPLACEMENT STB (Dalam Section yang Sama) -->
-        <div class="overflow-auto mt-12">
-          <table
-            class="min-w-full text-sm border border-black text-center whitespace-nowrap"
-          >
-            <thead class="text-xs font-bold">
-              <!-- BARIS 1: Judul -->
-              <tr>
-                <th
-                  colspan="40"
-                  class="bg-red-600 text-white text-lg py-2 border border-black"
-                >
-                  KENDALA REPLACEMENT STB 170K
-                </th>
-              </tr>
-
-              <!-- BARIS 2 -->
-              <tr>
-                <th
-                  rowspan="2"
-                  class="bg-green-300 border border-black px-2 py-1"
-                >
-                  TOTAL<br />TEKNISI
-                </th>
-                <th
-                  colspan="2"
-                  class="bg-green-400 border border-black px-2 py-1"
-                >
-                  DISMANTLE
-                </th>
-                <th
-                  colspan="1"
-                  class="bg-blue-600 text-white border border-black px-2 py-1"
-                >
-                  SALDO
-                </th>
-                <th
-                  colspan="33"
-                  class="bg-cyan-300 border border-black px-2 py-1"
-                >
-                  Progress
-                </th>
-                <th
-                  colspan="4"
-                  class="bg-cyan-300 border border-black px-2 py-1"
-                >
-                  {{ waktu_update }}
-                </th>
-              </tr>
-
-              <!-- BARIS 3 -->
-              <tr>
-                <th class="bg-white border border-black px-2 py-1">JUMLAH</th>
-                <th class="bg-green-200 border border-black px-2 py-1">
-                  SERVICE AREA
-                </th>
-                <th
-                  class="bg-blue-700 text-white border border-black px-2 py-1"
-                >
-                  AWAL
-                </th>
-                <th
-                  class="bg-blue-400 text-white border border-black px-2 py-1"
-                >
-                  PROGRES
-                </th>
-
-                <!-- Tanggal 25 Juni – 25 Juli (25 hari) -->
-                {% for tgl in tanggal_list %}
-                <th class="bg-red-700 text-white border border-black px-2 py-1">
-                  {{ tgl }}
-                </th>
-                {% endfor %}
-
-                <th class="bg-orange-300 border border-black px-2 py-1">
-                  Kendala
-                </th>
-                <th class="bg-yellow-300 border border-black px-2 py-1">
-                  Berhasil
-                </th>
-                <th class="bg-orange-500 border border-black px-2 py-1">
-                  SISA SALDO
-                </th>
-              </tr>
-            </thead>
-
-            <tbody>
-              <tr>
-                <td class="border border-black px-2 py-1">5</td>
-                <td class="border border-black px-2 py-1">BOGOR</td>
-                <td class="border border-black px-2 py-1">BOO</td>
-                <td class="border border-black px-2 py-1">30</td>
-                <td class="border border-black px-2 py-1">4</td>
-
-                {% for i in range(32) %}
-                <td class="border border-black px-1 py-1">0</td>
-                {% endfor %}
-
-                <td class="border border-black px-2 py-1">2</td>
-                <td class="border border-black px-2 py-1">15</td>
-                <td class="border border-black px-2 py-1">13</td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-
-        <!-- TABEL RINGKASAN KUNJUNGAN -->
-        <div class="overflow-auto mt-8">
-          <table
-            class="min-w-full text-sm border border-black text-center whitespace-nowrap"
-          >
-            <thead class="text-xs">
-              <tr>
-                <th
-                  rowspan="2"
-                  class="bg-cyan-400 border border-black px-4 py-2 align-middle"
-                >
-                  SERVICE AREA
-                </th>
-                <th
-                  colspan="1"
-                  class="bg-cyan-200 border border-black px-4 py-1"
-                >
-                  TOTAL VISIT
-                </th>
-                <th
-                  colspan="1"
-                  class="bg-green-200 border border-black px-4 py-1"
-                >
-                  DISMANTLE
-                </th>
-                <th
-                  colspan="1"
-                  class="bg-red-200 border border-black px-4 py-1"
-                >
-                  KENDALA
-                </th>
-                <th
-                  colspan="1"
-                  class="bg-orange-400 border border-black px-4 py-1"
-                >
-                  SISA
-                </th>
-              </tr>
-              <tr>
-                <th class="bg-yellow-50 border border-black px-4 py-1">HI</th>
-                <th class="bg-yellow-50 border border-black px-4 py-1">HI</th>
-                <th class="bg-yellow-50 border border-black px-4 py-1">HI</th>
-                <th
-                  class="bg-yellow-50 border border-black px-4 py-1 font-bold"
-                >
-                  ASSIGN
-                </th>
-              </tr>
-            </thead>
-          </table>
-        </div>
+        {% include "components/table_stb.html" %}
       </section>
     </main>
 
+    <!-- Footer -->
     <footer class="text-center text-sm text-gray-500 mt-12 py-4">
       &copy; 2025 Telkom Akses Reporting System
     </footer>
 
+    <!-- Custom Chart JS -->
     <script src="{{ url_for('static', filename='js/chart.js') }}"></script>
   </body>
 </html>

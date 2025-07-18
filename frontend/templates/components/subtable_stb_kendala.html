@@ -1,0 +1,71 @@
+<div class="overflow-auto">
+  <table
+    class="min-w-full text-sm border border-black text-center whitespace-nowrap"
+  >
+    <thead class="text-xs font-bold">
+      <tr>
+        <th
+          colspan="40"
+          class="bg-red-600 text-white text-lg py-2 border border-black"
+        >
+          KENDALA REPLACEMENT STB 170K
+        </th>
+      </tr>
+      <tr>
+        <th rowspan="2" class="bg-green-300 border border-black px-2 py-1">
+          TOTAL<br />TEKNISI
+        </th>
+        <th colspan="2" class="bg-green-400 border border-black px-2 py-1">
+          DISMANTLE
+        </th>
+        <th
+          colspan="1"
+          class="bg-blue-600 text-white border border-black px-2 py-1"
+        >
+          SALDO
+        </th>
+        <th colspan="33" class="bg-cyan-300 border border-black px-2 py-1">
+          Progress
+        </th>
+        <th colspan="4" class="bg-cyan-300 border border-black px-2 py-1">
+          {{ waktu_update }}
+        </th>
+      </tr>
+      <tr>
+        <th class="bg-white border border-black px-2 py-1">JUMLAH</th>
+        <th class="bg-green-200 border border-black px-2 py-1">SERVICE AREA</th>
+        <th class="bg-blue-700 text-white border border-black px-2 py-1">
+          AWAL
+        </th>
+        <th class="bg-blue-400 text-white border border-black px-2 py-1">
+          PROGRES
+        </th>
+        {% for tgl in tanggal_list %}
+        <th class="bg-red-700 text-white border border-black px-2 py-1">
+          {{ tgl }}
+        </th>
+        {% endfor %}
+        <th class="bg-orange-300 border border-black px-2 py-1">Kendala</th>
+        <th class="bg-yellow-300 border border-black px-2 py-1">Berhasil</th>
+        <th class="bg-orange-500 border border-black px-2 py-1">SISA SALDO</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for row in kendala_stb %}
+      <tr>
+        <td class="border border-black px-2 py-1">{{ row.teknisi }}</td>
+        <td class="border border-black px-2 py-1">{{ row.service_area }}</td>
+        <td class="border border-black px-2 py-1">{{ row.sto }}</td>
+        <td class="border border-black px-2 py-1">{{ row.saldo_awal }}</td>
+        <td class="border border-black px-2 py-1">{{ row.progres }}</td>
+        {% for val in row.progres_harian %}
+        <td class="border border-black px-1 py-1">{{ val }}</td>
+        {% endfor %}
+        <td class="border border-black px-2 py-1">{{ row.kendala }}</td>
+        <td class="border border-black px-2 py-1">{{ row.berhasil }}</td>
+        <td class="border border-black px-2 py-1">{{ row.sisa }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>

@@ -1,0 +1,54 @@
+<div class="overflow-auto">
+  <table class="min-w-full text-sm border border-black text-center whitespace-nowrap">
+    <thead class="text-xs">
+      <tr>
+        <th colspan="42" class="bg-blue-600 font-bold border border-black py-2 text-lg">
+          PROGRESS HARIAN COLLECT DISMANTLE
+        </th>
+      </tr>
+      <tr>
+        <th class="bg-red-300 border border-black px-2 py-1 w-[150px]">TOTAL TEKNISI</th>
+        <th colspan="2" class="bg-cyan-200 border border-black px-2 py-1 w-[180px]">DISMANTLE</th>
+        <th class="bg-black text-white border border-black px-2 py-1 w-[70px]">BERHASIL</th>
+        <th class="bg-black text-white border border-black px-2 py-1 w-[70px]">KENDALA</th>
+        <th class="bg-blue-800 text-white border border-black px-2 py-1 w-[70px]">SALDO</th>
+        <th colspan="33" class="bg-neutral-400 border border-black px-1 py-1">PROGRES</th>
+        <th colspan="3" class="bg-cyan-300 border border-black px-2 py-1">{{ waktu_update }}</th>
+      </tr>
+      <tr>
+        <th class="bg-white border border-black px-2 py-1">JUMLAH</th>
+        <th class="bg-green-200 border border-black px-2 py-1">SERVICE AREA</th>
+        <th class="bg-green-300 border border-black px-2 py-1">STO</th>
+        <th class="bg-yellow-200 border border-black px-2 py-1">MEI</th>
+        <th class="bg-yellow-200 border border-black px-2 py-1">MEI</th>
+        <th class="bg-blue-800 text-white border border-black px-2 py-1">AWAL</th>
+        <th class="bg-cyan-100 border border-black px-2 py-1">PROGRES</th>
+        {% for tgl in tanggal_list %}
+        <th class="bg-red-600 text-white border border-black px-2 py-1 w-[36px]">{{ tgl }}</th>
+        {% endfor %}
+        <th class="bg-green-200 border border-black px-2 py-1 w-[60px]">Berhasil</th>
+        <th class="bg-orange-300 border border-black px-2 py-1 w-[60px]">Kendala</th>
+        <th class="bg-orange-500 border border-black px-2 py-1 w-[80px]">SISA SALDO</th>
+      </tr>
+    </thead>
+    <tbody class="text-sm">
+      {% for row in data_dismantle %}
+      <tr>
+        <td class="border border-black px-2 py-1">{{ row.teknisi }}</td>
+        <td class="border border-black px-2 py-1">{{ row.service_area }}</td>
+        <td class="border border-black px-2 py-1">{{ row.sto }}</td>
+        <td class="border border-black px-2 py-1">{{ row.berhasil }}</td>
+        <td class="border border-black px-2 py-1">{{ row.kendala }}</td>
+        <td class="border border-black px-2 py-1">{{ row.saldo }}</td>
+        <td class="border border-black px-2 py-1">{{ row.progress }}</td>
+        {% for val in row.progres_harian %}
+        <td class="border border-black px-1 py-1">{{ val }}</td>
+        {% endfor %}
+        <td class="border border-black px-2 py-1">{{ row.total_berhasil }}</td>
+        <td class="border border-black px-2 py-1">{{ row.total_kendala }}</td>
+        <td class="border border-black px-2 py-1">{{ row.total_sisa }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>

@@ -1,0 +1,47 @@
+<div class="overflow-auto">
+  <table
+    class="min-w-full text-sm border border-black text-center whitespace-nowrap"
+  >
+    <thead class="text-xs">
+      <tr>
+        <th
+          rowspan="2"
+          class="bg-cyan-400 border border-black px-4 py-2 align-middle"
+        >
+          SERVICE AREA
+        </th>
+        <th colspan="1" class="bg-cyan-200 border border-black px-4 py-1">
+          TOTAL VISIT
+        </th>
+        <th colspan="1" class="bg-green-200 border border-black px-4 py-1">
+          DISMANTLE
+        </th>
+        <th colspan="1" class="bg-red-200 border border-black px-4 py-1">
+          KENDALA
+        </th>
+        <th colspan="1" class="bg-orange-400 border border-black px-4 py-1">
+          SISA
+        </th>
+      </tr>
+      <tr>
+        <th class="bg-yellow-50 border border-black px-4 py-1">HI</th>
+        <th class="bg-yellow-50 border border-black px-4 py-1">HI</th>
+        <th class="bg-yellow-50 border border-black px-4 py-1">HI</th>
+        <th class="bg-yellow-50 border border-black px-4 py-1 font-bold">
+          ASSIGN
+        </th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for row in ringkasan_dismantle %}
+      <tr>
+        <td class="border border-black px-2 py-1">{{ row.service_area }}</td>
+        <td class="border border-black px-2 py-1">{{ row.total_visit }}</td>
+        <td class="border border-black px-2 py-1">{{ row.dismantle }}</td>
+        <td class="border border-black px-2 py-1">{{ row.kendala }}</td>
+        <td class="border border-black px-2 py-1">{{ row.sisa }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
