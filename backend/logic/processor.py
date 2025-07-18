@@ -1,15 +1,16 @@
 import pandas as pd
 from openpyxl import Workbook
 from openpyxl.utils.dataframe import dataframe_to_rows
-from datetime import datetime, timedelta
+from datetime import datetime
 
-def generate_25_to_25_dates(start_date, end_date):
-    current = start_date
-    result = []
-    while current <= end_date:
-        result.append(current.strftime('%d-%m'))
-        current += timedelta(days=1)
-    return result
+def detect_column(df, expected_names):
+    if isinstance(expected_names, str):
+        expected_names = [expected_names]
+    for expected in expected_names:
+        for col in df.columns:
+            if col.strip().lower() == expected.strip().lower():
+                return col
+    raise ValueError(f"❌ Kolom tidak ditemukan. Kolom tersedia: {list(df.columns)}")
 
 def process_files(repl1, repl2, dis1, dis2, output_path, start_date=None, end_date=None):
     df_repl1 = pd.read_excel(repl1)
@@ -20,46 +21,44 @@ def process_files(repl1, repl2, dis1, dis2, output_path, start_date=None, end_da
     df_stb = pd.concat([df_repl1, df_repl2], ignore_index=True)
     df_dismantle = pd.concat([df_dis1, df_dis2], ignore_index=True)
 
-    for df in [df_stb, df_dismantle]:
-        df['Tanggal'] = pd.to_datetime(df['Tanggal'], dayfirst=True, errors='coerce')
-        if start_date and end_date:
-            df.dropna(subset=['Tanggal'], inplace=True)
-            df = df[(df['Tanggal'] >= start_date) & (df['Tanggal'] <= end_date)]
-        df['Tanggal_str'] = df['Tanggal'].dt.strftime('%d-%m')
+    status_col_stb = detect_column(df_stb, ['status', 'STATUS'])
+    status_col_dis = detect_column(df_dismantle, ['status', 'STATUS'])
 
-    paste_stb = df_stb.copy()
-    paste_dismantle = df_dismantle.copy()
+    df_stb = df_stb[df_stb[status_col_stb].astype(str).str.strip().str.lower() == 'open']
+    df_dismantle = df_dismantle[df_dismantle[status_col_dis].astype(str).str.strip().str.lower() == 'open']
 
-    stb_summary = df_stb.groupby(['Area', 'Tanggal_str']).size().unstack(fill_value=0).sort_index(axis=1)
-    dis_summary = df_dismantle.groupby(['Area', 'Tanggal_str']).size().unstack(fill_value=0).sort_index(axis=1)
-
+    # Save to Excel
     wb = Workbook()
+
     ws_stb = wb.active
     ws_stb.title = "PASTE STB"
-    for r in dataframe_to_rows(paste_stb, index=False, header=True):
-        ws_stb.append(r)
+    for row in dataframe_to_rows(df_stb, index=False, header=True):
+        ws_stb.append(row)
 
     ws_dis = wb.create_sheet("PASTE DISMANTLE")
-    for r in dataframe_to_rows(paste_dismantle, index=False, header=True):
-        ws_dis.append(r)
-
-    ws_dash_stb = wb.create_sheet("DASHBOARD STB")
-    ws_dash_stb.append(['Area'] + list(stb_summary.columns))
-    for idx, row in stb_summary.iterrows():
-        ws_dash_stb.append([idx] + row.tolist())
-
-    ws_dash_dis = wb.create_sheet("DASHBOARD DISMANTLE")
-    ws_dash_dis.append(['Area'] + list(dis_summary.columns))
-    for idx, row in dis_summary.iterrows():
-        ws_dash_dis.append([idx] + row.tolist())
+    for row in dataframe_to_rows(df_dismantle, index=False, header=True):
+        ws_dis.append(row)
 
     wb.save(output_path)
+    return []  # tanggal_list kosong karena tidak digunakan lagi
 
-    return generate_25_to_25_dates(start_date, end_date)
+def get_tanggal_list_from_output(output_path):
+    return []
 
-def get_tanggal_list_from_output(output_path, sheet_name="DASHBOARD STB"):
+def get_card_summary(output_path):
     try:
-        df = pd.read_excel(output_path, sheet_name=sheet_name)
-        return list(df.columns[1:])
-    except Exception:
-        return []
+        df_stb = pd.read_excel(output_path, sheet_name="PASTE STB")
+        df_dis = pd.read_excel(output_path, sheet_name="PASTE DISMANTLE")
+
+        # Deteksi kolom status
+        status_col_stb = detect_column(df_stb, ['status', 'STATUS'])
+        status_col_dis = detect_column(df_dis, ['status', 'STATUS'])
+
+        total_replace = len(df_stb[df_stb[status_col_stb].astype(str).str.lower().str.strip() == 'open'])
+        total_dismantle = len(df_dis[df_dis[status_col_dis].astype(str).str.lower().str.strip() == 'open'])
+
+        return total_replace, total_dismantle
+
+    except Exception as e:
+        print("Gagal mengambil card summary:", e)
+        return 0, 0

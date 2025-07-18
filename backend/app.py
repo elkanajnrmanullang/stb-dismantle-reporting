@@ -27,25 +27,39 @@ def home():
     print(">>> RENDERING index.html dari /frontend/templates")
     output_path = os.path.join(OUTPUT_FOLDER, 'hasil.xlsx')
 
+    # Ambil tanggal list
     try:
         tanggal_list = get_tanggal_list_from_output(output_path)
         if not tanggal_list:
             raise Exception("Tanggal kosong")
-    except Exception:
-        tanggal_list = list(range(25, 32)) + list(range(1, 26))
-    tanggal_list = [str(i) for i in tanggal_list]
+        tanggal_list = [str(t) for t in tanggal_list]
+    except Exception as e:
+        print(">> Error ambil tanggal_list:", e)
+        tanggal_list = list(map(str, list(range(25, 32)) + list(range(1, 26))))
 
-    print("Tanggal List:", tanggal_list)
-
+    # Waktu update
     waktu_update = datetime.now().strftime('%d-%B-%Y %H:%M')
+
+    # Summary card
+    try:
+        from logic.processor import get_card_summary
+        total_replace, total_dismantle = get_card_summary(output_path)
+    except Exception as e:
+        print(">> Error ambil card summary:", e)
+        total_replace, total_dismantle = 0, 0
+
+    # Dummy untuk tabel sementara
     dismantle_data = [("BOGOR", 195)]
 
     return render_template(
         'index.html',
         tanggal_list=tanggal_list,
         waktu_update=waktu_update,
+        total_replace=total_replace,
+        total_dismantle=total_dismantle,
         dismantle_data=dismantle_data
     )
+
 
 @app.route('/upload', methods=['GET', 'POST'])
 def upload_files():
