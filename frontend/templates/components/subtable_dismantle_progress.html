@@ -31,24 +31,61 @@
         <th class="bg-orange-500 border border-black px-2 py-1 w-[80px]">SISA SALDO</th>
       </tr>
     </thead>
+
     <tbody class="text-sm">
-      {% for row in data_dismantle %}
-      <tr>
-        <td class="border border-black px-2 py-1">{{ row.teknisi }}</td>
-        <td class="border border-black px-2 py-1">{{ row.service_area }}</td>
-        <td class="border border-black px-2 py-1">{{ row.sto }}</td>
-        <td class="border border-black px-2 py-1">{{ row.berhasil }}</td>
-        <td class="border border-black px-2 py-1">{{ row.kendala }}</td>
-        <td class="border border-black px-2 py-1">{{ row.saldo }}</td>
-        <td class="border border-black px-2 py-1">{{ row.progress }}</td>
-        {% for val in row.progres_harian %}
-        <td class="border border-black px-1 py-1">{{ val }}</td>
+      {% if data_dismantle %}
+        {% for row in data_dismantle %}
+        <tr class="{% if loop.last %}font-bold bg-neutral-100{% endif %}">
+          <td class="border border-black px-2 py-1">{{ row.teknisi }}</td>
+          <td class="border border-black px-2 py-1">{{ row.service_area }}</td>
+          <td class="border border-black px-2 py-1">{{ row.sto }}</td>
+          <td class="border border-black px-2 py-1">{{ row.berhasil }}</td>
+          <td class="border border-black px-2 py-1">{{ row.kendala }}</td>
+          <td class="border border-black px-2 py-1">{{ row.saldo }}</td>
+          <td class="border border-black px-2 py-1">{{ row.progress }}</td>
+          {% for val in row.progres_harian %}
+          <td class="border border-black px-1 py-1 {% if val > 0 %}bg-green-300{% endif %}">{{ val }}</td>
+          {% endfor %}
+          <td class="border border-black px-2 py-1">{{ row.total_berhasil }}</td>
+          <td class="border border-black px-2 py-1">{{ row.total_kendala }}</td>
+          <td class="border border-black px-2 py-1">{{ row.total_sisa }}</td>
+        </tr>
         {% endfor %}
-        <td class="border border-black px-2 py-1">{{ row.total_berhasil }}</td>
-        <td class="border border-black px-2 py-1">{{ row.total_kendala }}</td>
-        <td class="border border-black px-2 py-1">{{ row.total_sisa }}</td>
-      </tr>
-      {% endfor %}
+      {% else %}
+        {% for area in placeholder_area %}
+        <tr>
+          <td class="border border-black px-2 py-1">{{ area.teknisi }}</td>
+          <td class="border border-black px-2 py-1">{{ area.service_area }}</td>
+          <td class="border border-black px-2 py-1">{{ area.sto }}</td>
+          <td class="border border-black px-2 py-1">0</td>
+          <td class="border border-black px-2 py-1">0</td>
+          <td class="border border-black px-2 py-1">0</td>
+          <td class="border border-black px-2 py-1">0</td>
+          {% for tgl in tanggal_list %}
+          <td class="border border-black px-1 py-1">0</td>
+          {% endfor %}
+          <td class="border border-black px-2 py-1">0</td>
+          <td class="border border-black px-2 py-1">0</td>
+          <td class="border border-black px-2 py-1">0</td>
+        </tr>
+        {% endfor %}
+        <!-- Tambahkan baris total teknisi bawah -->
+        <tr class="font-bold bg-neutral-100">
+          <td class="border border-black px-2 py-1">269</td>
+          <td class="border border-black px-2 py-1"></td>
+          <td class="border border-black px-2 py-1"></td>
+          <td class="border border-black px-2 py-1">0</td>
+          <td class="border border-black px-2 py-1">0</td>
+          <td class="border border-black px-2 py-1">0</td>
+          <td class="border border-black px-2 py-1">0</td>
+          {% for tgl in tanggal_list %}
+          <td class="border border-black px-1 py-1">0</td>
+          {% endfor %}
+          <td class="border border-black px-2 py-1">0</td>
+          <td class="border border-black px-2 py-1">0</td>
+          <td class="border border-black px-2 py-1">0</td>
+        </tr>
+      {% endif %}
     </tbody>
   </table>
 </div>

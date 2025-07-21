@@ -1,25 +1,29 @@
-const ctx = document.getElementById('weeklyChart').getContext('2d');
-new Chart(ctx, {
-  type: 'bar',
-  data: {
-    labels: ['Sen', 'Sel', 'Rab', 'Kam', 'Jum', 'Sab', 'Min'],
-    datasets: [
-      {
-        label: 'Replacement',
-        backgroundColor: '#DC2626',
-        data: [20, 35, 40, 30, 60, 50, 70]
+document.addEventListener("DOMContentLoaded", function () {
+  const ctx = document.getElementById("weeklyChart").getContext("2d");
+
+  const chart = new Chart(ctx, {
+    type: "line",
+    data: {
+      labels: ["25", "26", "27", "28", "29", "30", "1", "2", "3"],
+      datasets: [
+        {
+          label: "Total Aktivitas",
+          data: [12, 19, 3, 5, 2, 3, 7, 9, 4],
+          borderColor: "rgb(239, 68, 68)",
+          fill: false,
+          tension: 0.3,
+        },
+      ],
+    },
+    options: {
+      responsive: true,
+      plugins: {
+        legend: { position: "top" },
+        title: {
+          display: true,
+          text: "Aktivitas Mingguan",
+        },
       },
-      {
-        label: 'Dismantle',
-        backgroundColor: '#4B5563',
-        data: [15, 30, 25, 20, 45, 40, 50]
-      }
-    ]
-  },
-  options: {
-    responsive: true,
-    scales: {
-      y: { beginAtZero: true }
-    }
-  }
+    },
+  });
 });
