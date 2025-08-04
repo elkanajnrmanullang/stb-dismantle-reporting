@@ -24,10 +24,10 @@
       rel="stylesheet"
     />
 
-    <!-- Chart.js -->
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script src="{{ url_for('static', filename='js/chart.js') }}"></script>
+    <!-- Javascript -->
     <script src="{{ url_for('static', filename='js/app.js') }}"></script>
+    <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+
   </head>
 
   <body class="bg-gray-50 text-gray-800 font-sans">
@@ -57,17 +57,6 @@
 
     <!-- Main Content -->
     <main class="max-w-7xl mx-auto px-4 py-8">
-      <!-- Ringkasan Kartu -->
-      <section class="grid md:grid-cols-2 gap-6 mb-10">
-        {% include "components/card_summary.html" %}
-      </section>
-
-      <!-- Grafik Mingguan -->
-      <section class="mb-10">
-        <h2 class="text-xl font-bold mb-4 text-gray-700">Grafik Mingguan</h2>
-        <canvas id="weeklyChart" height="100"></canvas>
-      </section>
-
       <!-- Section Dismantle -->
       <section class="bg-white shadow rounded p-4 mt-8">
         {% include "components/table_dismantle.html" %}
@@ -83,8 +72,5 @@
     <footer class="text-center text-sm text-gray-500 mt-12 py-4">
       &copy; 2025 Telkom Akses Reporting System
     </footer>
-
-    <!-- Custom Chart JS -->
-    <script src="{{ url_for('static', filename='js/chart.js') }}"></script>
   </body>
 </html>

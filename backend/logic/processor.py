@@ -3,13 +3,11 @@ from openpyxl import Workbook
 from openpyxl.utils.dataframe import dataframe_to_rows
 from datetime import datetime
 
-# --- Placeholder area (struktur tetap) ---
 placeholder_area = [
     {'teknisi': 18, 'service_area': 'BOGOR', 'sto': 'BOO'},
     {'teknisi': 3, 'service_area': 'CIAPUS - PAGELARAN', 'sto': 'CPS'},
     {'teknisi': 7, 'service_area': 'CIAPUS - PAGELARAN', 'sto': 'PAG'},
     {'teknisi': 9, 'service_area': 'CIBUNIAN', 'sto': 'CIB'},
-    # Tambahkan semua entry dari placeholder fix sesuai gambar
 ]
 
 def detect_column(df, expected_names):
@@ -22,15 +20,26 @@ def detect_column(df, expected_names):
     raise ValueError(f"❌ Kolom tidak ditemukan. Kolom tersedia: {list(df.columns)}")
 
 def process_files(repl1, repl2, dis1, dis2, output_path, start_date=None, end_date=None):
-    df_stb = pd.concat([pd.read_excel(repl1), pd.read_excel(repl2)], ignore_index=True)
-    df_dismantle = pd.concat([pd.read_excel(dis1), pd.read_excel(dis2)], ignore_index=True)
+    df_replacement1 = pd.read_excel(repl1)
+    df_replacement2 = pd.read_excel(repl2)
+    df_dismantle1 = pd.read_excel(dis1)
+    df_dismantle2 = pd.read_excel(dis2)
 
-    status_col_stb = detect_column(df_stb, ['status'])
-    status_col_dis = detect_column(df_dismantle, ['status'])
+    df_stb = pd.concat([df_replacement1, df_replacement2], ignore_index=True)
+    df_dismantle = pd.concat([df_dismantle1, df_dismantle2], ignore_index=True)
 
-    df_stb = df_stb[df_stb[status_col_stb].astype(str).str.strip().str.lower() == 'open']
-    df_dismantle = df_dismantle[df_dismantle[status_col_dis].astype(str).str.lower().isin(
-        ['open', 'close', 'kendala', 'delete', 'berbayar', 'tiba', 'sampai'])]
+    # Format kolom 'no_inet' jadi angka (int / pd.NA kalau gagal)
+    try:
+        no_inet_col_stb = detect_column(df_stb, ['no_inet'])
+        df_stb[no_inet_col_stb] = pd.to_numeric(df_stb[no_inet_col_stb], errors='coerce').astype('Int64')
+    except Exception as e:
+        print(">> Gagal konversi no_inet STB:", e)
+
+    try:
+        no_inet_col_dis = detect_column(df_dismantle, ['no inet', 'no_inet'])
+        df_dismantle[no_inet_col_dis] = pd.to_numeric(df_dismantle[no_inet_col_dis], errors='coerce').astype('Int64')
+    except Exception as e:
+        print(">> Gagal konversi NO INET Dismantle:", e)
 
     wb = Workbook()
     ws_stb = wb.active
@@ -44,7 +53,6 @@ def process_files(repl1, repl2, dis1, dis2, output_path, start_date=None, end_da
 
     wb.save(output_path)
 
-
 def get_tanggal_list_from_output(output_path):
     try:
         df = pd.read_excel(output_path, sheet_name="PASTE DISMANTLE")
@@ -55,21 +63,6 @@ def get_tanggal_list_from_output(output_path):
     except:
         return list(map(str, list(range(25, 32)) + list(range(1, 26))))
 
-def get_card_summary(output_path):
-    try:
-        df_stb = pd.read_excel(output_path, sheet_name="PASTE STB")
-        df_dis = pd.read_excel(output_path, sheet_name="PASTE DISMANTLE")
-
-        status_col_stb = detect_column(df_stb, ['status'])
-        status_col_dis = detect_column(df_dis, ['status'])
-
-        total_replace = len(df_stb[df_stb[status_col_stb].astype(str).str.lower().str.strip() == 'open'])
-        total_dismantle = len(df_dis[df_dis[status_col_dis].astype(str).str.lower().str.strip() == 'open'])
-        return total_replace, total_dismantle
-    except Exception as e:
-        print("Gagal mengambil card summary:", e)
-        return 0, 0
-    
 def get_dismantle_kendala_table(output_path):
     df = pd.read_excel(output_path, sheet_name="PASTE DISMANTLE")
     df.columns = df.columns.str.lower()
@@ -115,7 +108,7 @@ def get_dismantle_kendala_table(output_path):
         total_row['sisa'] = sum(h['sisa'] for h in hasil)
         hasil.append(total_row)
 
-    return hasil, [d.strftime("%-d") for d in tanggal_range]    
+    return hasil, [d.strftime("%-d") for d in tanggal_range]
 
 def get_dismantle_progress_table(output_path):
     df = pd.read_excel(output_path, sheet_name="PASTE DISMANTLE")
@@ -153,7 +146,6 @@ def get_dismantle_progress_table(output_path):
 
         hasil.append(row)
 
-    # Row terakhir (sum semua kolom)
     if hasil:
         total_row = {
             'teknisi': sum(h['teknisi'] for h in hasil),

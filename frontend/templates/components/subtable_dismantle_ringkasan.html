@@ -1,47 +1,73 @@
-<div class="overflow-auto">
+<div class="overflow-auto mt-6">
+  <div class="flex justify-between items-center mb-2"></div>
+  <div class="mb-2">
+    <button
+      onclick="captureTable('dismantle_visit')"
+      class="text-sm bg-green-600 hover:bg-green-700 text-white px-3 py-1 rounded"
+    >
+      Capture
+    </button>
+  </div>
   <table
-    class="min-w-full text-sm border border-black text-center whitespace-nowrap"
+    id="dismantle_visit"
+    class="min-w-full text-sm border border-black text-center align-middle whitespace-nowrap"
   >
     <thead class="text-xs">
-      <tr>
+      <tr class="font-bold">
         <th
           rowspan="2"
-          class="bg-cyan-400 border border-black px-4 py-2 align-middle"
+          class="bg-blue-500 border border-black px-4 py-2 align-middle"
         >
           SERVICE AREA
         </th>
-        <th colspan="1" class="bg-cyan-200 border border-black px-4 py-1">
+        <th colspan="1" class="bg-Sky-500 border border-black px-4 py-1">
           TOTAL VISIT
         </th>
-        <th colspan="1" class="bg-green-200 border border-black px-4 py-1">
+        <th colspan="1" class="bg-lime-600 border border-black px-4 py-1">
           DISMANTLE
         </th>
-        <th colspan="1" class="bg-red-200 border border-black px-4 py-1">
+        <th colspan="1" class="bg-rose-400 border border-black px-4 py-1">
           KENDALA
         </th>
-        <th colspan="1" class="bg-orange-400 border border-black px-4 py-1">
+        <th colspan="1" class="bg-amber-600 border border-black px-4 py-1">
           SISA
         </th>
       </tr>
       <tr>
-        <th class="bg-yellow-50 border border-black px-4 py-1">HI</th>
-        <th class="bg-yellow-50 border border-black px-4 py-1">HI</th>
-        <th class="bg-yellow-50 border border-black px-4 py-1">HI</th>
-        <th class="bg-yellow-50 border border-black px-4 py-1 font-bold">
+        <th class="bg-yellow-50 border border-black px-4 py-1 font-medium">
+          HI
+        </th>
+        <th class="bg-yellow-50 border border-black px-4 py-1 font-medium">
+          HI
+        </th>
+        <th class="bg-yellow-50 border border-black px-4 py-1 font-medium">
+          HI
+        </th>
+        <th class="bg-Amber-600 border border-black px-4 py-1 font-bold">
           ASSIGN
         </th>
       </tr>
     </thead>
     <tbody>
-      {% for row in ringkasan_dismantle %}
+      {% set wilayah = [ 'BOGOR', 'CIAPUS - PAGELARAN', 'CIAWI - CISARUA',
+      'CIBADAK', 'CIBINONG', 'CILEUNGSI', 'CINERE', 'DEPOK', 'DRAMAGA', 'GUNUNG
+      PUTRI - CIANGSANA', 'KEDUNG HALANG', 'PARUNG - SEMPLAK', 'PASIR MAUNG',
+      'SUKABUMI', 'SUKMAJAYA' ] %} {% for nama in wilayah %}
       <tr>
-        <td class="border border-black px-2 py-1">{{ row.service_area }}</td>
-        <td class="border border-black px-2 py-1">{{ row.total_visit }}</td>
-        <td class="border border-black px-2 py-1">{{ row.dismantle }}</td>
-        <td class="border border-black px-2 py-1">{{ row.kendala }}</td>
-        <td class="border border-black px-2 py-1">{{ row.sisa }}</td>
+        <td class="border border-black px-2 py-1 text-left">{{ nama }}</td>
+        <td class="border border-black px-2 py-1">0</td>
+        <td class="border border-black px-2 py-1">0</td>
+        <td class="border border-black px-2 py-1">0</td>
+        <td class="border border-black px-2 py-1">0</td>
       </tr>
       {% endfor %}
+      <tr class="bg-[#E6FBFF] font-semibold">
+        <td class="border border-black px-2 py-1 text-center align-middle">TOTAL</td>
+        <td class="border border-black px-2 py-1">0</td>
+        <td class="border border-black px-2 py-1">0</td>
+        <td class="border border-black px-2 py-1">0</td>
+        <td class="border border-black px-2 py-1">0</td>
+      </tr>
     </tbody>
   </table>
 </div>

@@ -1,3 +1,11 @@
+from logic.database import SessionLocal
+from logic.models import (
+    ProgressDismantle, KendalaDismantle,
+    STBProgress, KendalaSTB,
+    VisitDismantle, VisitSTB
+)
+from datetime import datetime
+
 placeholder_area = [
     {'teknisi': 18, 'service_area': 'BOGOR', 'sto': 'BOO'},
     {'teknisi': 3, 'service_area': 'CIAPUS - PAGELARAN', 'sto': 'CPS'},
@@ -43,3 +51,56 @@ placeholder_area = [
     {'teknisi': 2, 'service_area': 'SUKABUMI', 'sto': 'SGN'},
     {'teknisi': 23, 'service_area': 'SUKABUMI', 'sto': 'SKB'}
 ]
+
+visit_service_areas = [
+    'BOGOR', 'CIAPUS - PAGELARAN', 'CIAWI - CISARUA',
+    'CIBADAK', 'CIBINONG', 'CILEUNGSI', 'CINERE', 'DEPOK',
+    'DRAMAGA', 'GUNUNG PUTRI - CIANGSANA', 'KEDUNG HALANG',
+    'PARUNG - SEMPLAK', 'PASIR MAUNG', 'SUKABUMI', 'SUKMAJAYA'
+]
+
+def insert_placeholder():
+    db = SessionLocal()
+    now = datetime.now()
+    success = 0
+    failed = 0
+
+    for area in placeholder_area:
+        exists = db.query(ProgressDismantle).filter_by(service_area=area['service_area'], sto=area['sto']).first()
+        if exists:
+            continue 
+
+        try:
+            db.add_all([
+                ProgressDismantle(teknisi=area['teknisi'], service_area=area['service_area'], sto=area['sto'], waktu_update=now),
+                KendalaDismantle(teknisi=area['teknisi'], service_area=area['service_area'], sto=area['sto'], waktu_update=now),
+                STBProgress(teknisi=area['teknisi'], service_area=area['service_area'], sto=area['sto'], waktu_update=now),
+                KendalaSTB(teknisi=area['teknisi'], service_area=area['service_area'], sto=area['sto'], waktu_update=now)
+            ])
+            success += 1
+        except Exception as e:
+            print(f"❌ Gagal insert untuk {area['service_area']} - {area['sto']}: {e}")
+            failed += 1
+
+    for sa in visit_service_areas:
+        try:
+            if not db.query(VisitDismantle).filter_by(service_area=sa).first():
+                db.add(VisitDismantle(service_area=sa))
+            if not db.query(VisitSTB).filter_by(service_area=sa).first():
+                db.add(VisitSTB(service_area=sa))
+        except Exception as e:
+            print(f"❌ Gagal insert visit untuk {sa}: {e}")
+
+    try:
+        db.commit()
+        print(f"✅ {success} area berhasil dimasukkan ke 4 tabel utama (x4 = {success*4} records)")
+        print(f"✅ {len(visit_service_areas)} area berhasil dimasukkan ke tabel visit_dismantle & visit_stb (x2 = {len(visit_service_areas)*2} records)")
+        if failed > 0:
+            print(f"⚠️ {failed} area gagal insert.")
+    except Exception as e:
+        print(f"❌ Commit gagal: {e}")
+    finally:
+        db.close()
+
+if __name__ == "__main__":
+    insert_placeholder()

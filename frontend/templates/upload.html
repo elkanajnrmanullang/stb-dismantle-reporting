@@ -1,215 +1,125 @@
 <!DOCTYPE html>
 <html lang="id">
-  <head>
-    <meta charset="UTF-8" />
-    <title>Upload File | STB & Dismantle</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-
-    <!-- Tailwind CSS -->
-    <link
-      href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css"
-      rel="stylesheet"
-    />
-    <link
-      rel="icon"
-      href="{{ url_for('static', filename='assets/icon.png') }}"
-      type="image/png"
-    />
-
-    <!-- Custom CSS -->
-    <link
-      href="{{ url_for('static', filename='css/style.css') }}"
-      rel="stylesheet"
-    />
-  </head>
-  <body class="bg-white text-gray-800 font-sans">
-    <header class="bg-red-600 text-white py-6 shadow">
-      <div class="max-w-6xl mx-auto px-4 flex justify-between items-center">
-        <!-- Logo + Judul -->
-        <div class="flex items-center space-x-4">
-          <img
-            src="{{ url_for('static', filename='assets/logo.png') }}"
-            alt="Logo Telkom"
-            class="h-20 w-auto"
-          />
-          <div>
-            <h1 class="text-3xl font-bold">STB & Dismantle Reporting</h1>
-            <p class="text-sm mt-1">Sistem ringkasan laporan harian Telkom</p>
-          </div>
+<head>
+  <meta charset="UTF-8" />
+  <title>Upload File | STB & Dismantle</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet" />
+  <link rel="icon" href="{{ url_for('static', filename='assets/icon.png') }}" type="image/png" />
+  <link href="{{ url_for('static', filename='css/style.css') }}" rel="stylesheet" />
+</head>
+<body class="bg-white text-gray-800 font-sans">
+  <header class="bg-red-600 text-white py-6 shadow">
+    <div class="max-w-6xl mx-auto px-4 flex justify-between items-center">
+      <div class="flex items-center space-x-4">
+        <img src="{{ url_for('static', filename='assets/logo.png') }}" alt="Logo Telkom" class="h-20 w-auto" />
+        <div>
+          <h1 class="text-3xl font-bold">STB & Dismantle Reporting</h1>
+          <p class="text-sm mt-1">Sistem ringkasan laporan harian Telkom</p>
         </div>
-
-        <!-- Navigation -->
-        <nav class="space-x-4">
-          <a href="/" class="hover:underline">Home</a>
-          <a href="/upload" class="hover:underline font-bold">Upload</a>
-        </nav>
       </div>
-    </header>
+      <nav class="space-x-4">
+        <a href="/" class="hover:underline">Home</a>
+        <a href="/upload" class="hover:underline font-bold">Upload</a>
+      </nav>
+    </div>
+  </header>
 
-    <main class="max-w-6xl mx-auto py-10 px-4">
-      {% with messages = get_flashed_messages(with_categories=true) %} {% if
-      messages %}
+  <main class="max-w-6xl mx-auto py-10 px-4">
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
       <div class="mb-4">
         {% for category, message in messages %}
-        <div
-          class="p-3 rounded text-white font-medium {% if category == 'success' %}bg-green-600{% else %}bg-red-600{% endif %}"
-        >
+        <div class="p-3 rounded text-white font-medium {% if category == 'success' %}bg-green-600{% else %}bg-red-600{% endif %}">
           {{ message }}
         </div>
         {% endfor %}
       </div>
-      {% endif %} {% endwith %}
+      {% endif %}
+    {% endwith %}
 
-      <form
-        action="/upload"
-        method="POST"
-        enctype="multipart/form-data"
-        class="space-y-6"
-      >
-        <div>
-          <h2 class="text-lg font-bold text-red-600 mb-2">Replacement STB</h2>
-          <div class="grid md:grid-cols-2 gap-4">
-            <div>
-              <label class="block font-semibold mb-1">Wilayah 1</label>
-              <input
-                type="file"
-                name="replacement1"
-                required
-                class="w-full border p-2 rounded"
-              />
+    <form action="/upload" method="POST" enctype="multipart/form-data" class="space-y-8">
+
+      <!-- Replacement STB Upload -->
+      <div>
+        <h2 class="text-lg font-bold text-red-600 mb-4">Replacement STB</h2>
+
+        <!-- Box -->
+        <div id="box-replacement">
+          <label for="replacement" class="flex flex-col items-center justify-center w-full h-40 border-2 border-dashed border-red-400 rounded-lg cursor-pointer bg-red-50 hover:bg-red-100 transition">
+            <div class="flex flex-col items-center justify-center pt-5 pb-6">
+              <svg class="w-10 h-10 mb-3 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16v-4m0 0V4m0 8h10m-4 4v4m0 0H7m4 0h6" />
+              </svg>
+              <p class="mb-2 text-sm text-red-700"><span class="font-semibold">Klik untuk unggah</span> atau drag file ke sini</p>
+              <p class="text-xs text-gray-500">File Excel (.xlsx) gabungan wilayah</p>
             </div>
-            <div>
-              <label class="block font-semibold mb-1">Wilayah 2</label>
-              <input
-                type="file"
-                name="replacement2"
-                required
-                class="w-full border p-2 rounded"
-              />
-            </div>
-          </div>
+            <input id="replacement" name="replacement" type="file" class="hidden" required onchange="updateFilename('replacement')" />
+          </label>
         </div>
 
-        <div>
-          <h2 class="text-lg font-bold text-red-600 mb-2">Dismantle</h2>
-          <div class="grid md:grid-cols-2 gap-4">
-            <div>
-              <label class="block font-semibold mb-1">Wilayah 1</label>
-              <input
-                type="file"
-                name="dismantle1"
-                required
-                class="w-full border p-2 rounded"
-              />
-            </div>
-            <div>
-              <label class="block font-semibold mb-1">Wilayah 2</label>
-              <input
-                type="file"
-                name="dismantle2"
-                required
-                class="w-full border p-2 rounded"
-              />
-            </div>
+        <!-- Preview -->
+        <div id="preview-replacement" class="hidden flex items-center justify-between mt-2 p-3 bg-red-50 border border-red-300 rounded-md">
+          <div class="flex items-center space-x-2">
+            <svg class="w-5 h-5 text-red-600" fill="currentColor" viewBox="0 0 20 20">
+              <path d="M4 2a2 2 0 00-2 2v12a2 2 0 002 2h12a2 2 0 002-2V8l-6-6H4z" />
+            </svg>
+            <span id="filename-replacement" class="text-sm text-gray-700 font-medium"></span>
           </div>
-        </div>
-
-        <div class="text-right">
-          <button
-            type="submit"
-            class="bg-red-600 hover:bg-red-700 text-white px-6 py-2 rounded font-semibold"
-          >
-            Proses & Gabungkan
-          </button>
-        </div>
-      </form>
-
-      {% if download_ready %}
-      <div class="mt-10 space-y-8">
-        <!-- Tombol download -->
-        <div class="text-right">
-          <a
-            href="{{ url_for('download_file') }}"
-            class="inline-block bg-blue-600 hover:bg-blue-700 text-white px-5 py-2 rounded font-semibold text-sm"
-          >
-            📥 Download Excel Hasil
-          </a>
-        </div>
-
-        <!-- Ringkasan Card -->
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <!-- Card Replacement -->
-          <div
-            class="bg-white p-6 shadow-md rounded-lg border-l-4 border-red-600"
-          >
-            <div class="flex items-center space-x-4">
-              <div class="bg-red-100 p-3 rounded-full">
-                <svg
-                  class="w-6 h-6 text-red-600"
-                  fill="none"
-                  stroke="currentColor"
-                  stroke-width="2"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    d="M5 13l4 4L19 7"
-                  />
-                </svg>
-              </div>
-              <div>
-                <h3
-                  class="text-sm text-gray-500 uppercase font-semibold tracking-wide"
-                >
-                  Total Replacement Open Hingga Hari Ini
-                </h3>
-                <p class="text-3xl font-bold text-red-700 mt-1">
-                  {{ total_replace }}
-                </p>
-              </div>
-            </div>
-          </div>
-
-          <!-- Card Dismantle -->
-          <div
-            class="bg-white p-6 shadow-md rounded-lg border-l-4 border-red-600"
-          >
-            <div class="flex items-center space-x-4">
-              <div class="bg-red-100 p-3 rounded-full">
-                <svg
-                  class="w-6 h-6 text-red-600"
-                  fill="none"
-                  stroke="currentColor"
-                  stroke-width="2"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    d="M5 13l4 4L19 7"
-                  />
-                </svg>
-              </div>
-              <div>
-                <h3
-                  class="text-sm text-gray-500 uppercase font-semibold tracking-wide"
-                >
-                  Total Dismantle Open Hingga Hari Ini
-                </h3>
-                <p class="text-3xl font-bold text-red-700 mt-1">
-                  {{ total_dismantle }}
-                </p>
-              </div>
-            </div>
-          </div>
+          <button type="button" onclick="removeFile('replacement')" class="text-red-600 hover:text-red-800 text-lg font-bold">&times;</button>
         </div>
       </div>
-      {% endif %}
-    </main>
 
-    <footer class="text-center text-sm text-gray-500 mt-12 py-6">
-      &copy; 2025 Telkom Akses Reporting System
-    </footer>
-  </body>
+      <!-- Dismantle Upload -->
+      <div>
+        <h2 class="text-lg font-bold text-red-600 mb-4">Dismantle</h2>
+
+        <!-- Box -->
+        <div id="box-dismantle">
+          <label for="dismantle" class="flex flex-col items-center justify-center w-full h-40 border-2 border-dashed border-red-400 rounded-lg cursor-pointer bg-red-50 hover:bg-red-100 transition">
+            <div class="flex flex-col items-center justify-center pt-5 pb-6">
+              <svg class="w-10 h-10 mb-3 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16v-4m0 0V4m0 8h10m-4 4v4m0 0H7m4 0h6" />
+              </svg>
+              <p class="mb-2 text-sm text-red-700"><span class="font-semibold">Klik untuk unggah</span> atau drag file ke sini</p>
+              <p class="text-xs text-gray-500">File Excel (.xlsx) gabungan wilayah</p>
+            </div>
+            <input id="dismantle" name="dismantle" type="file" class="hidden" required onchange="updateFilename('dismantle')" />
+          </label>
+        </div>
+
+        <!-- Preview -->
+        <div id="preview-dismantle" class="hidden flex items-center justify-between mt-2 p-3 bg-red-50 border border-red-300 rounded-md">
+          <div class="flex items-center space-x-2">
+            <svg class="w-5 h-5 text-red-600" fill="currentColor" viewBox="0 0 20 20">
+              <path d="M4 2a2 2 0 00-2 2v12a2 2 0 002 2h12a2 2 0 002-2V8l-6-6H4z" />
+            </svg>
+            <span id="filename-dismantle" class="text-sm text-gray-700 font-medium"></span>
+          </div>
+          <button type="button" onclick="removeFile('dismantle')" class="text-red-600 hover:text-red-800 text-lg font-bold">&times;</button>
+        </div>
+      </div>
+
+      <div class="text-right">
+        <button type="submit" class="bg-red-600 hover:bg-red-700 text-white px-6 py-2 rounded font-semibold">Proses & Gabungkan</button>
+      </div>
+    </form>
+
+    {% if download_ready %}
+    <div class="mt-10 space-y-8">
+      <div class="text-right">
+        <a href="{{ url_for('download_file') }}" class="inline-block bg-blue-600 hover:bg-blue-700 text-white px-5 py-2 rounded font-semibold text-sm">
+          Download Hasil
+        </a>
+      </div>
+    </div>
+    {% endif %}
+  </main>
+
+  <footer class="text-center text-sm text-gray-500 mt-12 py-6">
+    &copy; 2025 Telkom Akses Reporting System
+  </footer>
+
+  <script src="{{ url_for('static', filename='js/app.js') }}"></script>
+</body>
 </html>
