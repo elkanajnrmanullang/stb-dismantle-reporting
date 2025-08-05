@@ -45,40 +45,38 @@
         </th>
       </tr>
       <tr>
-        <th class="bg-[#FDF9E1] border border-black px-4 py-1 font-medium">
-          HI
-        </th>
-        <th class="bg-[#FDF9E1] border border-black px-4 py-1 font-medium">
-          HI
-        </th>
-        <th class="bg-[#FDF9E1] border border-black px-4 py-1 font-medium">
-          HI
-        </th>
-        <th class="bg-[#FDF9E1] border border-black px-4 py-1 font-bold">
-          ASSIGN
-        </th>
+        <th class="bg-[#FDF9E1] border border-black px-4 py-1 font-medium">HI</th>
+        <th class="bg-[#B9F7D0] border border-black px-4 py-1 font-medium">HI</th>
+        <th class="bg-[#FFD6D6] border border-black px-4 py-1 font-medium">HI</th>
+        <th class="bg-[#FDF9E1] border border-black px-4 py-1 font-bold">ASSIGN</th>
       </tr>
     </thead>
+
     <tbody>
-      {% set wilayah = [ 'BOGOR', 'CIAPUS - PAGELARAN', 'CIAWI - CISARUA',
-      'CIBADAK', 'CIBINONG', 'CILEUNGSI', 'CINERE', 'DEPOK', 'DRAMAGA', 'GUNUNG
-      PUTRI - CIANGSANA', 'KEDUNG HALANG', 'PARUNG - SEMPLAK', 'PASIR MAUNG',
-      'SUKABUMI', 'SUKMAJAYA' ] %} {% for nama in wilayah %}
-      <tr>
-        <td class="border border-black px-2 py-1 text-left">{{ nama }}</td>
-        <td class="border border-black px-2 py-1">0</td>
-        <td class="border border-black px-2 py-1">0</td>
-        <td class="border border-black px-2 py-1">0</td>
-        <td class="border border-black px-2 py-1">0</td>
-      </tr>
-      {% endfor %}
-      <tr class="bg-[#E6FBFF] font-semibold">
-        <td class="border border-black px-2 py-1 text-center">TOTAL</td>
-        <td class="border border-black px-2 py-1">0</td>
-        <td class="border border-black px-2 py-1">0</td>
-        <td class="border border-black px-2 py-1">0</td>
-        <td class="border border-black px-2 py-1">0</td>
-      </tr>
+      {% if ringkasan_stb %}
+        {% for row in ringkasan_stb %}
+        <tr>
+          <td class="border border-black px-2 py-1 text-left">{{ row.service_area }}</td>
+          <td class="border border-black px-2 py-1">{{ row.total_visit }}</td>
+          <td class="border border-black px-2 py-1">{{ row.dismantle }}</td>
+          <td class="border border-black px-2 py-1">{{ row.kendala }}</td>
+          <td class="border border-black px-2 py-1">{{ row.sisa }}</td>
+        </tr>
+        {% endfor %}
+        <tr class="bg-[#E6FBFF] font-semibold">
+          <td class="border border-black px-2 py-1 text-center">TOTAL</td>
+          <td class="border border-black px-2 py-1">{{ total_visit }}</td>
+          <td class="border border-black px-2 py-1">{{ total_dismantle }}</td>
+          <td class="border border-black px-2 py-1">{{ total_kendala }}</td>
+          <td class="border border-black px-2 py-1">{{ total_sisa }}</td>
+        </tr>
+      {% else %}
+        <tr>
+          <td colspan="5" class="border border-black py-2 text-center text-gray-500">
+            Tidak ada data visit STB ditemukan.
+          </td>
+        </tr>
+      {% endif %}
     </tbody>
   </table>
 </div>

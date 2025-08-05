@@ -9,6 +9,8 @@ ENV/
 env/
 .venv/
 
+backend/logic/database.py
+
 # Flask instance folder
 instance/
 

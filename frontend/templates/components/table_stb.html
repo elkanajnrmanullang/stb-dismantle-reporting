@@ -1,11 +1,16 @@
-<p class="text-sm text-right text-gray-600 italic">Update terakhir: {{ waktu_update }}</p>
-<h2 class="text-xl font-bold mb-4 text-gray-700 border-b">DASHBOARD REPLACEMENT STB</h2>
+<p class="text-sm text-right text-gray-600 italic">
+  Update terakhir: {{ waktu_update }}
+</p>
+<h2 class="text-xl font-bold mb-4 text-gray-700 border-b">
+  DASHBOARD REPLACEMENT STB
+</h2>
 
 <!-- PROGRESS HARIAN STB -->
+{% set stb_progress = stb_progress %}
 {% include "components/subtable_stb_progress.html" %}
 
 <!-- KENDALA STB -->
 <div class="mt-8">{% include "components/subtable_stb_kendala.html" %}</div>
 
 <!-- RINGKASAN KUNJUNGAN STB -->
-<div class="mt-8">{% include "components/subtable_stb_ringkasan.html" %}</div>
+<div class="mt-8">{% include 'components/subtable_stb_ringkasan.html' with context %}</div>
