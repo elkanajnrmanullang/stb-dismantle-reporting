@@ -2,6 +2,7 @@ import pandas as pd
 from datetime import datetime
 from logic.models import STBProgress
 
+
 def process_stb_progress(df: pd.DataFrame, records: list, bulan: int, tahun: int):
     print("✅ [DEBUG] Memulai proses STB Progress")
 
@@ -74,7 +75,7 @@ def process_stb_progress(df: pd.DataFrame, records: list, bulan: int, tahun: int
         print(f"✅ {sto} → SALDO AWAL: {row.saldo_awal}, ASSIGN: {row.assign}, "
               f"BERHASIL: {row.berhasil}, KENDALA: {row.kendala}, SISA: {row.saldo_akhir}")
 
-    # Update baris total
+    # Update baris TOTAL (jika ada)
     for row in records:
         if row.is_total_row:
             row.teknisi = total_teknisi
@@ -87,3 +88,41 @@ def process_stb_progress(df: pd.DataFrame, records: list, bulan: int, tahun: int
             for t in range(1, 32):
                 setattr(row, f"t{t}", total_tanggal[f"t{t}"])
             print("✅ Baris TOTAL diupdate.")
+
+
+def generate_stb_total_rows(records, kendala_records):
+    """
+    Menghasilkan baris total untuk ditambahkan ke tabel STBProgress.
+    Mengembalikan:
+    - List berisi 1 row total (baris_total)
+    - Nilai saldo_akhir_total
+    """
+    from logic.models import STBProgress
+    from datetime import datetime
+
+    total_teknisi = sum([row.teknisi or 0 for row in records])
+    total_saldo_awal = sum([row.saldo_awal or 0 for row in records])
+    total_assign = sum([row.assign or 0 for row in records])
+    total_kendala = sum([row.kendala or 0 for row in records])
+    total_berhasil = sum([row.berhasil or 0 for row in records])
+    saldo_akhir_total = total_saldo_awal - (total_berhasil + total_kendala)
+
+    total_row = STBProgress(
+        teknisi=total_teknisi,
+        service_area="TOTAL",
+        sto="",
+        saldo_awal=total_saldo_awal,
+        assign=total_assign,
+        berhasil=total_berhasil,
+        kendala=total_kendala,
+        saldo_akhir=saldo_akhir_total,
+        is_total_row=True,
+        waktu_update=datetime.now()
+    )
+
+    # 🔧 Perbaikan: isi t1–t31 dengan jumlah dari seluruh baris
+    for i in range(1, 32):
+        total_ti = sum([getattr(r, f"t{i}", 0) or 0 for r in records])
+        setattr(total_row, f"t{i}", total_ti)
+
+    return [total_row], saldo_akhir_total
