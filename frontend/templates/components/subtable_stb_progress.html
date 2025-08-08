@@ -31,9 +31,9 @@
           REPLACEMENT STB
         </th>
         <th
-          class="bg-blue-500 text-white border border-black px-2 py-1 w-[70px]"
+          class="bg-blue-200 text-black border border-black px-2 py-1 w-[70px]"
         >
-          SALDO AWAL
+          SALDO
         </th>
         <th colspan="35" class="bg-cyan-200 border border-black px-1 py-1">
           PROGRES
@@ -59,93 +59,43 @@
     </thead>
 
     <tbody class="text-sm">
-      {% if stb_progress %} {% for row in stb_progress %}
-      <tr class="{% if row.is_total_row %}font-bold bg-neutral-100{% endif %}">
-        <td class="border border-black px-2 py-1">{{ row.teknisi }}</td>
-        <td class="border border-black px-2 py-1">{{ row.service_area }}</td>
-        <td class="border border-black px-2 py-1">{{ row.sto }}</td>
-        <td class="border border-black px-2 py-1">{{ row.saldo_awal }}</td>
-        <td class="border border-black px-2 py-1">{{ row.assign }}</td>
-        {% for i in range(1, 32) %} {% set key = 't' ~ i %} {% set val =
-        getattr(row, 't' ~ i, 0) or 0 %}
-        <td
-          class="border border-black px-1 py-1 {% if val > 0 %}bg-green-300{% endif %}"
-        >
-          {{ val }}
-        </td>
+      {% if stb_progress %}
+        {% for row in stb_progress %}
+          <tr class="{% if row.is_total_row %}font-bold bg-neutral-100{% endif %}">
+            <td class="border border-black px-2 py-1">{{ row.teknisi or 0 }}</td>
+            <td class="border border-black px-2 py-1">{{ row.service_area }}</td>
+            <td class="border border-black px-2 py-1">{{ row.sto }}</td>
+            <td class="border border-black px-2 py-1">{{ row.saldo_awal or 0 }}</td>
+            <td class="border border-black px-2 py-1">{{ row.assign or 0 }}</td>
+            {% for i in range(1, 32) %}
+              {% set val = getattr(row, 't' ~ i, 0) %}
+              {% if val is none %}{% set val = 0 %}{% endif %}
+              <td class="border border-black px-1 py-1 {% if val > 0 %}bg-green-300{% endif %}">
+                {{ val }}
+              </td>
+            {% endfor %}
+            <td class="border border-black px-2 py-1">{{ row.berhasil or 0 }}</td>
+            <td class="border border-black px-2 py-1">{{ row.kendala or 0 }}</td>
+            <td class="border border-black px-2 py-1">{{ row.saldo_akhir or 0 }}</td>
+          </tr>
         {% endfor %}
-        <td class="border border-black px-2 py-1">{{ row.berhasil }}</td>
-        <td class="border border-black px-2 py-1">{{ row.kendala }}</td>
-        <td class="border border-black px-2 py-1">{{ row.saldo_akhir }}</td>
-      </tr>
-      {% endfor %} {% else %} {% for area in placeholder_area %}
-      <tr>
-        <td class="border border-black px-2 py-1">{{ area.teknisi }}</td>
-        <td class="border border-black px-2 py-1">{{ area.service_area }}</td>
-        <td class="border border-black px-2 py-1">{{ area.sto }}</td>
-        <td class="border border-black px-2 py-1">0</td>
-        <td class="border border-black px-2 py-1">0</td>
-        {% for _ in range(31) %}
-        <td class="border border-black px-1 py-1">0</td>
+      {% else %}
+        {% for area in placeholder_area %}
+          <tr>
+            <td class="border border-black px-2 py-1">{{ area.teknisi }}</td>
+            <td class="border border-black px-2 py-1">{{ area.service_area }}</td>
+            <td class="border border-black px-2 py-1">{{ area.sto }}</td>
+            <td class="border border-black px-2 py-1">0</td>
+            <td class="border border-black px-2 py-1">0</td>
+            {% for _ in range(31) %}
+              <td class="border border-black px-1 py-1">0</td>
+            {% endfor %}
+            <td class="border border-black px-2 py-1">0</td>
+            <td class="border border-black px-2 py-1">0</td>
+            <td class="border border-black px-2 py-1">0</td>
+          </tr>
         {% endfor %}
-        <td class="border border-black px-2 py-1">0</td>
-        <td class="border border-black px-2 py-1">0</td>
-        <td class="border border-black px-2 py-1">0</td>
-      </tr>
-      {% endfor %}
-      <tr class="bg-neutral-100 font-bold">
-        <td class="border border-black bg-cyan-300">269</td>
-        <td colspan="41" class="border border-black bg-black"></td>
-      </tr>
       {% endif %}
-
-      <!-- Ringkasan Bawah -->
-      <tr class="font-bold">
-        <td class="border border-black bg-cyan-300 align-middle" rowspan="3">
-          269
-        </td>
-        <td
-          class="border border-black bg-green-100 align-middle"
-          rowspan="3"
-          colspan="2"
-        >
-          TOTAL
-        </td>
-        <td
-          class="border border-black bg-blue-400 text-black align-middle"
-          rowspan="3"
-        >
-          3460
-        </td>
-        <td class="border border-black bg-green-500 text-black">COLLECT</td>
-        {% for _ in range(31) %}
-        <td class="border border-black bg-green-300 text-black">0</td>
-        {% endfor %}
-        <td class="border border-black bg-white text-black">17</td>
-        <td class="border border-black bg-black"></td>
-        <td rowspan="3" class="border border-black bg-orange-400 text-black">
-          1264
-        </td>
-      </tr>
-      <tr class="font-bold">
-        <td class="border border-black bg-blue-400 text-white">KENDALA</td>
-        {% for _ in range(31) %}
-        <td class="border border-black bg-red-200">0</td>
-        {% endfor %}
-        <td class="border border-black bg-black"></td>
-        <td class="border border-black bg-orange-300 text-black">17</td>
-      </tr>
-      <tr class="font-bold">
-        <td class="border border-black bg-blue-400 text-black">
-          TOTAL VISI HI
-        </td>
-        {% for _ in range(31) %}
-        <td class="border border-black bg-yellow-300">0</td>
-        {% endfor %}
-        <td colspan="2" class="border border-black bg-cyan-300 text-black">
-          194
-        </td>
-      </tr>
     </tbody>
   </table>
 </div>

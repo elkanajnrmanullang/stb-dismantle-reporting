@@ -256,53 +256,33 @@ def dismantle_progress():
 @app.route("/replacement/progress")
 def replacement_progress():
     db = SessionLocal()
-    data = db.query(STBProgress).filter_by(is_total_row=False).order_by(
-        STBProgress.service_area, STBProgress.sto
-    ).all()
-
-    total_teknisi = sum(row.teknisi or 0 for row in data)
-    total_saldo_awal = sum(row.saldo_awal or 0 for row in data)
-
-    # Baris total (tanpa field tidak valid)
-    total_row = STBProgress(
-        teknisi=total_teknisi,
-        service_area="TOTAL",
-        sto="",
-        saldo_awal=total_saldo_awal,
-        assign=0,
-        berhasil=0,
-        kendala=0,
-        saldo_akhir=0,
-        is_total_row=True
-    )
-    # Tambahkan atribut progres_harian untuk tampilan di HTML
-    total_row.progres_harian = [0]*31
-
-    # Inject ke data agar ditampilkan di bawah
-    data.append(total_row)
-
-    for row in data:
-        row.progres_harian = [getattr(row, f"t{i}", 0) or 0 for i in range(1, 32)]
+    data = db.query(STBProgress).order_by(STBProgress.service_area, STBProgress.sto).all()
+    db.close()
 
     now = datetime.now()
     prev_month_dt = now.replace(day=1) - timedelta(days=1)
     prev_month_label = month_name[prev_month_dt.month].upper()
     prev_month_number = prev_month_dt.month
 
-    if data and data[0].waktu_update:
-        waktu_update = data[0].waktu_update.strftime('%d-%B-%Y %H:%M')
-    else:
-        waktu_update = "-"
+    tanggal_list = [f't{i}' for i in range(1, 32)]
+    waktu_update = now.strftime('%d %B %Y %H:%M')
 
-    db.close()
+    # Parsing progres_harian
+    for row in data:
+        progres = []
+        for i in range(1, 32):
+            val = getattr(row, f"t{i}", None)
+            progres.append(val if val is not None else 0)
+        row.progres_harian = progres
+
     return render_template(
         "components/subtable_stb_progress.html",
         stb_progress=data,
-        tanggal_list=[str(i) for i in range(1, 32)],
+        tanggal_list=tanggal_list,
+        bulan_lalu=prev_month_label,
         waktu_update=waktu_update,
-        prev_month_label=prev_month_label,
-        prev_month_number=prev_month_number
     )
+
 
 
 @app.route("/stb/kendala")
