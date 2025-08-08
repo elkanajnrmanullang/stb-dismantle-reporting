@@ -46,16 +46,10 @@
           SALDO
         </th>
         <th
-          colspan="31"
-          class="bg-neutral-400 border border-black px-1 py-1 align-middle"
+          colspan="35"
+          class="bg-neutral-800 border border-black px-1 py-1 align-middle"
         >
           PROGRES
-        </th>
-        <th
-          colspan="3"
-          class="bg-cyan-300 border border-black px-2 py-1 align-middle"
-        >
-          {{ waktu_update }}
         </th>
       </tr>
       <tr>
@@ -79,7 +73,7 @@
         >
           AWAL
         </th>
-        <th class="bg-cyan-100 border border-black px-2 py-1 align-middle">
+        <th class="bg-blue-800 text-white border border-black px-2 py-1 align-middle">
           PROGRES
         </th>
         {% for i in range(1, 32) %}
@@ -90,17 +84,20 @@
         </th>
         {% endfor %}
         <th
-          class="bg-green-200 border border-black px-2 py-1 w-[60px] align-middle"
+          class="border border-black px-2 py-1 w-[60px] align-middle"
+          style="background-color: #ea580c !important"
         >
-          Berhasil
+          BERHASIL
         </th>
         <th
-          class="bg-orange-300 border border-black px-2 py-1 w-[60px] align-middle"
+          class="border border-black px-2 py-1 w-[60px] align-middle"
+          style="background-color: #ea580c !important"
         >
-          Kendala
+          KENDALA
         </th>
         <th
-          class="bg-orange-500 border border-black px-2 py-1 w-[80px] align-middle"
+          class="border border-black px-2 py-1 w-[60px] align-middle"
+          style="background-color: #ea580c !important"
         >
           SISA SALDO
         </th>
@@ -137,9 +134,13 @@
           {{ val or 0 }}
         </td>
         {% endfor %}
-        <td class="border border-black px-2 py-1 align-middle">
+        <td
+          class="border border-black px-2 py-1 align-middle"
+          style="background-color: {{ row.warna_total_berhasil }}"
+        >
           {{ row.berhasil or 0 }}
         </td>
+
         <td class="border border-black px-2 py-1 align-middle">
           {{ row.kendala or 0 }}
         </td>
@@ -148,9 +149,9 @@
         </td>
       </tr>
       {% endfor %}
-      <tr class="font-bold bg-neutral-100">
+      <tr class="font-bold bg-blue-500">
         <td class="border border-black px-2 py-1 align-middle">
-          {{ data_dismantle | sum(attribute='jumlah_teknisi') }}
+          {{ data_dismantle | sum(attribute='teknisi') }}
         </td>
         <td colspan="2" class="border border-black bg-black text-white"></td>
         <td class="border border-black px-2 py-1 align-middle">

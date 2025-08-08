@@ -19,39 +19,17 @@ def detect_column(df, expected_names):
                 return col
     raise ValueError(f"❌ Kolom tidak ditemukan. Kolom tersedia: {list(df.columns)}")
 
-def process_files(repl1, repl2, dis1, dis2, output_path, start_date=None, end_date=None):
-    df_replacement1 = pd.read_excel(repl1)
-    df_replacement2 = pd.read_excel(repl2)
-    df_dismantle1 = pd.read_excel(dis1)
-    df_dismantle2 = pd.read_excel(dis2)
+def process_files(replacement_file, dismantle_file, output_path, start_date, end_date):
+    df1 = pd.read_excel(replacement_file)
+    df2 = pd.read_excel(dismantle_file)
+    
+    # Contoh sederhana gabungkan dua file
+    combined = pd.concat([df1, df2], ignore_index=True)
+    
+    with pd.ExcelWriter(output_path, engine='openpyxl') as writer:
+        combined.to_excel(writer, index=False, sheet_name="Combined")
 
-    df_stb = pd.concat([df_replacement1, df_replacement2], ignore_index=True)
-    df_dismantle = pd.concat([df_dismantle1, df_dismantle2], ignore_index=True)
-
-    # Format kolom 'no_inet' jadi angka (int / pd.NA kalau gagal)
-    try:
-        no_inet_col_stb = detect_column(df_stb, ['no_inet'])
-        df_stb[no_inet_col_stb] = pd.to_numeric(df_stb[no_inet_col_stb], errors='coerce').astype('Int64')
-    except Exception as e:
-        print(">> Gagal konversi no_inet STB:", e)
-
-    try:
-        no_inet_col_dis = detect_column(df_dismantle, ['no inet', 'no_inet'])
-        df_dismantle[no_inet_col_dis] = pd.to_numeric(df_dismantle[no_inet_col_dis], errors='coerce').astype('Int64')
-    except Exception as e:
-        print(">> Gagal konversi NO INET Dismantle:", e)
-
-    wb = Workbook()
-    ws_stb = wb.active
-    ws_stb.title = "PASTE STB"
-    for row in dataframe_to_rows(df_stb, index=False, header=True):
-        ws_stb.append(row)
-
-    ws_dis = wb.create_sheet("PASTE DISMANTLE")
-    for row in dataframe_to_rows(df_dismantle, index=False, header=True):
-        ws_dis.append(row)
-
-    wb.save(output_path)
+    return True
 
 def get_tanggal_list_from_output(output_path):
     try:

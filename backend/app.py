@@ -1,5 +1,9 @@
 from flask import Flask, render_template, request, send_file, redirect, url_for, flash
 import os
+import pandas as pd
+from logic.dismantle_progress import process_dismantle_progress
+from logic.rumus_dismantle_kendala import process_dismantle_kendala
+from logic.stb_progress import process_stb_progress
 from datetime import datetime, timedelta
 from calendar import month_name
 from logic.database import SessionLocal
@@ -23,7 +27,6 @@ app.secret_key = 'your_secret_key'
 UPLOAD_FOLDER = '../uploads'
 OUTPUT_FOLDER = '../outputs'
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
-os.makedirs(OUTPUT_FOLDER, exist_ok=True)
 
 @app.context_processor
 def inject_request():
@@ -52,14 +55,25 @@ def home():
 
     db = SessionLocal()
 
-    data_dismantle = db.query(ProgressDismantle).filter_by(is_total_row=False).all()
-    kendala_dismantle = db.query(KendalaDismantle).filter_by(is_total_row=False).all()
+    kendala_dismantle_all = db.query(KendalaDismantle).all()
+    kendala_dismantle = [row for row in kendala_dismantle_all if not row.is_total_row]
+    kendala_dismantle_total = [row for row in kendala_dismantle_all if row.is_total_row]
+
     visit_dismantle = db.query(VisitDismantle).all()
     visit_stb = db.query(VisitSTB).all()
     visit_stb_data = db.query(VisitSTB).filter_by(is_total=False).order_by(VisitSTB.service_area).all()
 
+    dismantle_data_raw = db.query(ProgressDismantle).filter_by(is_total_row=False).all()
+    if dismantle_data_raw and dismantle_data_raw[0].waktu_update:
+        waktu_update_dismantle = dismantle_data_raw[0].waktu_update.strftime("%d-%m-%Y %H:%M")
+    else:
+        waktu_update_dismantle = "-"
+
     stb_progress_raw = db.query(STBProgress).filter_by(is_total_row=False).all()
-    waktu_update = stb_progress_raw[0].waktu_update.strftime("%d-%m-%Y %H:%M") if stb_progress_raw else "-"
+    if stb_progress_raw and stb_progress_raw[0].waktu_update:
+        waktu_update_stb = stb_progress_raw[0].waktu_update.strftime("%d-%m-%Y %H:%M")
+    else:
+        waktu_update_stb = "-"
 
     stb_progress = []
     for row in stb_progress_raw:
@@ -80,7 +94,7 @@ def home():
     for row in kendala_stb_raw:
         progres = [getattr(row, f"t{i}", 0) or 0 for i in range(1, 32)]
         row.progres_harian = progres
-        
+
     ringkasan_stb = []
     for row in visit_stb_data:
         ringkasan_stb.append({
@@ -89,23 +103,27 @@ def home():
             "dismantle": row.dismantle,
             "kendala": row.kendala,
             "sisa": row.sisa_assign
-    })
+        })
 
+    data_dismantle = dismantle_data_raw
     total_visit = sum(row["total_visit"] for row in ringkasan_stb)
     total_dismantle = sum(row["dismantle"] for row in ringkasan_stb)
     total_kendala = sum(row["kendala"] for row in ringkasan_stb)
-    total_sisa = sum(row["sisa"] for row in ringkasan_stb)    
+    total_sisa = sum(row["sisa"] for row in ringkasan_stb)
+    
+    stb_progress = db.query(STBProgress).filter_by(is_total_row=False).all()
 
     db.close()
 
     return render_template(
         'index.html',
         tanggal_list=tanggal_list,
-        waktu_update=waktu_update,
+        waktu_update=waktu_update_dismantle,
         data_dismantle=data_dismantle,
         prev_month_label=prev_month_label,
         prev_month_number=prev_month_number,
         kendala_dismantle=kendala_dismantle,
+        kendala_dismantle_total=kendala_dismantle_total,
         visit_dismantle=visit_dismantle,
         visit_stb=visit_stb,
         stb_progress=stb_progress,
@@ -116,6 +134,7 @@ def home():
         total_kendala=total_kendala,
         total_sisa=total_sisa
     )
+
 
 @app.route('/upload', methods=['GET', 'POST'])
 def upload_files():
@@ -137,9 +156,9 @@ def upload_files():
         now = datetime.now()
         start_date = datetime(now.year, now.month, 1)
         end_date = datetime(now.year, now.month, 31)
-
         output_path = os.path.join(OUTPUT_FOLDER, 'ReportingSTB_Dismantle.xlsx')
 
+        # Proses ETL awal (untuk ekspor Excel)
         process_files(
             replacement_file=path_replacement,
             dismantle_file=path_dismantle,
@@ -148,12 +167,54 @@ def upload_files():
             end_date=end_date
         )
 
-        flash("✅ Berhasil menggabungkan file Excel!", "success")
+        # -------------------------------
+        # ⬇ Proses Dismantle
+        # -------------------------------
+        df_dismantle = pd.read_excel(path_dismantle)
+        db = SessionLocal()
+
+        # Bersihkan baris total sebelumnya
+        db.query(ProgressDismantle).filter_by(is_total_row=True).delete()
+        db.query(KendalaDismantle).filter_by(is_total_row=True).delete()
+        db.commit()
+
+        # Hitung progress dismantle
+        records = db.query(ProgressDismantle).filter_by(is_total_row=False).all()
+        process_dismantle_progress(df_dismantle, records, now.month, now.year)
+        for r in records:
+            db.add(r)
+
+        # Hitung kendala dismantle
+        kendala_records = db.query(KendalaDismantle).filter_by(is_total_row=False).all()
+        progress_records = db.query(ProgressDismantle).filter_by(is_total_row=False).all()
+        process_dismantle_kendala(df_dismantle, kendala_records, progress_records, now.month, now.year)
+        for r in kendala_records:
+            db.add(r)
+
+        # -------------------------------
+        # ⬇ Proses Replacement STB
+        # -------------------------------
+        df_replacement = pd.read_excel(path_replacement)
+
+        # Bersihkan baris total sebelumnya
+        db.query(STBProgress).filter_by(is_total_row=True).delete()
+        db.commit()
+
+        stb_records = db.query(STBProgress).filter_by(is_total_row=False).all()
+        process_stb_progress(df_replacement, stb_records, now.month, now.year)
+        for r in stb_records:
+            db.add(r)
+
+        db.commit()
+        db.close()
+
+        flash("✅ Berhasil menggabungkan dan memproses file Excel!", "success")
         return render_template('upload.html', download_ready=True)
 
     except Exception as e:
         flash(f"❌ Gagal memproses file: {str(e)}", "error")
         return redirect(url_for('upload_files'))
+
 
 @app.route('/download')
 def download_file():
@@ -169,16 +230,22 @@ def dismantle_progress():
     db = SessionLocal()
     data = db.query(ProgressDismantle).order_by(ProgressDismantle.service_area, ProgressDismantle.sto).all()
     db.close()
-
+    
+    total_teknisi = sum([row.jumlah_teknisi or 0 for row in data])
+    
     now = datetime.now()
+
     prev_month_dt = now.replace(day=1) - timedelta(days=1)
     prev_month_label = month_name[prev_month_dt.month].upper()
     prev_month_number = prev_month_dt.month
-    waktu_update = now.strftime('%d-%B-%Y %H:%M')
+    if data and data[0].waktu_update:
+        waktu_update = data[0].waktu_update.strftime('%d-%B-%Y %H:%M')
+    else:
+        waktu_update = "-"
     tanggal_list = [f't{i}' for i in range(1, 32)]
 
     return render_template(
-        'subtable_dismantle_progress.html',
+        'components/subtable_dismantle_progress.html',
         data_dismantle=data,
         tanggal_list=tanggal_list,
         waktu_update=waktu_update,
@@ -186,30 +253,57 @@ def dismantle_progress():
         prev_month_number=prev_month_number
     )
 
-@app.route("/dismantle/kendala")
-def dismantle_kendala_table():
+@app.route("/replacement/progress")
+def replacement_progress():
     db = SessionLocal()
-    data = db.query(KendalaDismantle).filter_by(is_total_row=False).order_by(KendalaDismantle.service_area, KendalaDismantle.sto).all()
-    db.close()
+    data = db.query(STBProgress).filter_by(is_total_row=False).order_by(
+        STBProgress.service_area, STBProgress.sto
+    ).all()
+
+    total_teknisi = sum(row.teknisi or 0 for row in data)
+    total_saldo_awal = sum(row.saldo_awal or 0 for row in data)
+
+    # Baris total (tanpa field tidak valid)
+    total_row = STBProgress(
+        teknisi=total_teknisi,
+        service_area="TOTAL",
+        sto="",
+        saldo_awal=total_saldo_awal,
+        assign=0,
+        berhasil=0,
+        kendala=0,
+        saldo_akhir=0,
+        is_total_row=True
+    )
+    # Tambahkan atribut progres_harian untuk tampilan di HTML
+    total_row.progres_harian = [0]*31
+
+    # Inject ke data agar ditampilkan di bawah
+    data.append(total_row)
+
+    for row in data:
+        row.progres_harian = [getattr(row, f"t{i}", 0) or 0 for i in range(1, 32)]
 
     now = datetime.now()
     prev_month_dt = now.replace(day=1) - timedelta(days=1)
     prev_month_label = month_name[prev_month_dt.month].upper()
     prev_month_number = prev_month_dt.month
-    waktu_update = now.strftime('%d-%B-%Y %H:%M')
 
-    for row in data:
-        progres = [getattr(row, f"t{i}", 0) or 0 for i in range(1, 32)]
-        row.progres_harian = progres
+    if data and data[0].waktu_update:
+        waktu_update = data[0].waktu_update.strftime('%d-%B-%Y %H:%M')
+    else:
+        waktu_update = "-"
 
+    db.close()
     return render_template(
-        "components/subtable_dismantle_kendala.html",
-        kendala_dismantle=data,
-        prev_month_label=prev_month_label,
-        prev_month_number=prev_month_number,
+        "components/subtable_stb_progress.html",
+        stb_progress=data,
+        tanggal_list=[str(i) for i in range(1, 32)],
         waktu_update=waktu_update,
-        data_stb=data
+        prev_month_label=prev_month_label,
+        prev_month_number=prev_month_number
     )
+
 
 @app.route("/stb/kendala")
 def replacement_kendala():

@@ -86,7 +86,7 @@ class STBProgress(Base):
     locals().update(generate_tanggal_columns())
     locals().update(generate_tanggal_columns('t', jumlah_col=True))
     locals().update(generate_jumlah_fields([
-        'teknisi', 'saldo_awal', 'assign',
+        'teknisi', 'saldo_awal',
         'progress', 'berhasil', 'kendala', 'saldo_akhir'
     ]))
 
