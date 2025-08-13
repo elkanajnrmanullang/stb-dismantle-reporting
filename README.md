@@ -1,8 +1,4 @@
-
-markdown
-Copy
-Edit
-# 📊 Sistem Web Otomatisasi Pelaporan Harian Dismantling & Replacement STB – Telkom Akses
+# Sistem Web Otomatisasi Pelaporan Harian Dismantling & Replacement STB – Telkom Akses
 
 Proyek ini bertujuan untuk membantu **PT Telkom Indonesia**, khususnya **Telkom Akses**, dalam memonitor dan mengelola data **perangkat STB (Set Top Box)** yang mengalami proses **dismantle (pencabutan)** maupun **replacement (penggantian)** oleh teknisi di lapangan.  
 
@@ -12,7 +8,7 @@ Sistem memproses file Excel gabungan (per kategori), menghitung rekap harian (ta
 
 ---
 
-## 🚀 Fitur Utama
+## Fitur Utama
 - **Upload File Excel** (Dismantle & Replacement)
 - **Pemrosesan Otomatis**:
   - Rekap progress harian berdasarkan status (`CLOSE`, `OPEN`, `KENDALA`, `ASSIGN`)
@@ -30,7 +26,7 @@ Sistem memproses file Excel gabungan (per kategori), menghitung rekap harian (ta
 
 ---
 
-## 🛠️ Tech Stack
+## Tech Stack
 **Frontend**  
 - HTML + Tailwind CSS  
 - Alpine.js (interaktivitas)  
@@ -45,3 +41,4 @@ Sistem memproses file Excel gabungan (per kategori), menghitung rekap harian (ta
 
 **Export**  
 - OpenPyXL / XlsxWriter  
+
