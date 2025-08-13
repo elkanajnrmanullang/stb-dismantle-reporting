@@ -13,183 +13,132 @@
   >
     <thead class="text-xs">
       <tr>
-        <th
-          colspan="42"
-          class="bg-blue-600 font-bold border border-black py-2 text-lg align-middle"
-        >
+        <th colspan="42" class="bg-blue-600 font-bold border border-black py-2 text-lg align-middle">
           PROGRESS HARIAN COLLECT DISMANTLE
         </th>
       </tr>
       <tr>
-        <th class="bg-red-300 border border-black px-2 py-1 align-middle">
-          TOTAL TEKNISI
-        </th>
-        <th
-          colspan="2"
-          class="bg-cyan-200 border border-black px-2 py-1 align-middle"
-        >
-          DISMANTLE
-        </th>
-        <th
-          class="bg-black text-white border border-black px-2 py-1 align-middle"
-        >
-          BERHASIL
-        </th>
-        <th
-          class="bg-black text-white border border-black px-2 py-1 align-middle"
-        >
-          KENDALA
-        </th>
-        <th
-          class="bg-blue-800 text-white border border-black px-2 py-1 align-middle"
-        >
-          SALDO
-        </th>
-        <th
-          colspan="35"
-          class="bg-neutral-800 border border-black px-1 py-1 align-middle"
-        >
-          PROGRES
-        </th>
+        <th class="bg-red-300 border border-black px-2 py-1 align-middle">TOTAL TEKNISI</th>
+        <th colspan="2" class="bg-green-300 border border-black px-2 py-1 align-middle">DISMANTLE</th>
+        <th class="bg-black text-white border border-black px-2 py-1 align-middle">BERHASIL</th>
+        <th class="bg-black text-white border border-black px-2 py-1 align-middle">KENDALA</th>
+        <th class="bg-blue-800 text-white border border-black px-2 py-1 align-middle">SALDO</th>
+        <th colspan="32" class="bg-neutral-800 border border-black px-1 py-1 align-middle">PROGRES</th>
+        <th colspan="3" class="bg-blue-600 border border-black px-1 py-1 align-middle"></th>
       </tr>
       <tr>
-        <th class="bg-white border border-black px-2 py-1 align-middle">
-          JUMLAH
-        </th>
-        <th class="bg-green-200 border border-black px-2 py-1 align-middle">
-          SERVICE AREA
-        </th>
-        <th class="bg-green-300 border border-black px-2 py-1 align-middle">
-          STO
-        </th>
-        <th class="bg-yellow-200 border border-black px-2 py-1 align-middle">
-          {{ prev_month_label }}
-        </th>
-        <th class="bg-yellow-200 border border-black px-2 py-1 align-middle">
-          {{ prev_month_label }}
-        </th>
-        <th
-          class="bg-blue-800 text-white border border-black px-2 py-1 align-middle"
-        >
-          AWAL
-        </th>
-        <th class="bg-blue-800 text-white border border-black px-2 py-1 align-middle">
-          PROGRES
-        </th>
+        <th class="bg-red-300 border border-black px-2 py-1 align-middle">JUMLAH</th>
+        <th class="bg-green-300 border border-black px-2 py-1 align-middle">SERVICE AREA</th>
+        <th class="bg-green-300 border border-black px-2 py-1 align-middle">STO</th>
+        <th class="bg-yellow-200 border border-black px-2 py-1 align-middle">{{ prev_month_label }}</th>
+        <th class="bg-yellow-200 border border-black px-2 py-1 align-middle">{{ prev_month_label }}</th>
+        <th class="bg-blue-800 text-white border border-black px-2 py-1 align-middle">AWAL</th>
+        <th class="bg-blue-800 text-white border border-black px-2 py-1 align-middle">PROGRES</th>
         {% for i in range(1, 32) %}
-        <th
-          class="bg-red-600 text-white border border-black px-2 py-1 w-[36px] align-middle"
-        >
-          {{ i }}
-        </th>
+          <th class="bg-red-600 text-white border border-black px-2 py-1 w-[36px] align-middle">{{ i }}</th>
         {% endfor %}
-        <th
-          class="border border-black px-2 py-1 w-[60px] align-middle"
-          style="background-color: #ea580c !important"
-        >
-          BERHASIL
-        </th>
-        <th
-          class="border border-black px-2 py-1 w-[60px] align-middle"
-          style="background-color: #ea580c !important"
-        >
-          KENDALA
-        </th>
-        <th
-          class="border border-black px-2 py-1 w-[60px] align-middle"
-          style="background-color: #ea580c !important"
-        >
-          SISA SALDO
-        </th>
+        <th class="border border-black px-2 py-1 w-[60px] align-middle bg-green-400">BERHASIL</th>
+        <th class="border border-black px-2 py-1 w-[60px] align-middle">KENDALA</th>
+        <th class="border border-black px-2 py-1 w-[60px] align-middle" style="background-color:#00d492!important">SISA SALDO</th>
       </tr>
     </thead>
-    <tbody class="text-sm">
-      {% if data_dismantle %} {% for row in data_dismantle %}
-      <tr>
-        <td class="border border-black px-2 py-1 align-middle">
-          {{ row.teknisi or 0 }}
-        </td>
-        <td class="border border-black px-2 py-1 align-middle">
-          {{ row.service_area or '-' }}
-        </td>
-        <td class="border border-black px-2 py-1 align-middle">
-          {{ row.sto or '-' }}
-        </td>
-        <td class="border border-black px-2 py-1 align-middle">
-          {{ row.berhasil_bulan_lalu or 0 }}
-        </td>
-        <td class="border border-black px-2 py-1 align-middle">
-          {{ row.kendala_bulan_lalu or 0 }}
-        </td>
-        <td class="border border-black px-2 py-1 align-middle">
-          {{ row.saldo_awal or 0 }}
-        </td>
-        <td class="border border-black px-2 py-1 align-middle">
-          {{ row.progress or 0 }}
-        </td>
-        {% for i in range(1, 32) %} {% set val = getattr(row, 't' ~ i) %}
-        <td
-          class="border border-black px-1 py-1 align-middle {% if val|int > 0 %}bg-green-300{% endif %}"
-        >
-          {{ val or 0 }}
-        </td>
-        {% endfor %}
-        <td
-          class="border border-black px-2 py-1 align-middle"
-          style="background-color: {{ row.warna_total_berhasil }}"
-        >
-          {{ row.berhasil or 0 }}
-        </td>
 
-        <td class="border border-black px-2 py-1 align-middle">
-          {{ row.kendala or 0 }}
-        </td>
-        <td class="border border-black px-2 py-1 align-middle">
-          {{ row.saldo_akhir or 0 }}
-        </td>
-      </tr>
-      {% endfor %}
-      <tr class="font-bold bg-blue-500">
-        <td class="border border-black px-2 py-1 align-middle">
-          {{ data_dismantle | sum(attribute='teknisi') }}
-        </td>
-        <td colspan="2" class="border border-black bg-black text-white"></td>
-        <td class="border border-black px-2 py-1 align-middle">
-          {{ data_dismantle | sum(attribute='berhasil_bulan_lalu') }}
-        </td>
-        <td class="border border-black px-2 py-1 align-middle">
-          {{ data_dismantle | sum(attribute='kendala_bulan_lalu') }}
-        </td>
-        <td class="border border-black px-2 py-1 align-middle">
-          {{ data_dismantle | sum(attribute='saldo_awal') }}
-        </td>
-        <td class="border border-black px-2 py-1 align-middle">
-          {{ data_dismantle | sum(attribute='progress') }}
-        </td>
-        {% for i in range(1, 32) %}
-        <td class="border border-black px-1 py-1 align-middle">
-          {{ data_dismantle | sum(attribute='t' ~ i) }}
-        </td>
+    {% set berhasil_values = (data_dismantle | map(attribute='berhasil') | map('int') | list) if data_dismantle else [] %}
+    {% set has_berhasil = berhasil_values and (berhasil_values|length) > 0 %}
+    {% if has_berhasil %}
+      {% set b_min = berhasil_values|min %}
+      {% set b_max = berhasil_values|max %}
+      {% set b_sorted = berhasil_values|sort %}
+      {% set b_mid = b_sorted[(b_sorted|length)//2] %}
+    {% endif %}
+
+    {% set sisa_values = (data_dismantle | map(attribute='saldo_akhir') | map('int') | list) if data_dismantle else [] %}
+    {% set has_sisa = sisa_values and (sisa_values|length) > 0 %}
+    {% if has_sisa %}
+      {% set s_min = sisa_values|min %}
+      {% set s_max = sisa_values|max %}
+      {% set s_sorted = sisa_values|sort %}
+      {% set s_mid = s_sorted[(s_sorted|length)//2] %}
+    {% endif %}
+
+    <tbody class="text-sm">
+      {% if data_dismantle %}
+        {% for row in data_dismantle %}
+        <tr>
+          <td class="border border-black px-2 py-1 align-middle">{{ row.teknisi or 0 }}</td>
+          <td class="border border-black px-2 py-1 align-middle">{{ row.service_area or '-' }}</td>
+          <td class="border border-black px-2 py-1 align-middle">{{ row.sto or '-' }}</td>
+          <td class="border border-black px-2 py-1 align-middle">{{ row.berhasil_bulan_lalu or 0 }}</td>
+          <td class="border border-black px-2 py-1 align-middle">{{ row.kendala_bulan_lalu or 0 }}</td>
+          <td class="border border-black px-2 py-1 align-middle">{{ row.saldo_awal or 0 }}</td>
+          <td class="border border-black px-2 py-1 align-middle">{{ row.progress or 0 }}</td>
+
+          {% for i in range(1, 32) %}{% set val = getattr(row, 't' ~ i) %}
+          <td class="border border-black px-1 py-1 align-middle {% if val|int > 0 %}bg-green-300{% endif %}">{{ val or 0 }}</td>
+          {% endfor %}
+
+          {% set v_b = (row.berhasil or 0)|int %}
+          {% if not has_berhasil or b_max == b_min %}
+            {% set b_col = '#FFFFFF' %}
+          {% elif v_b <= b_mid %}
+            {% set den = (b_mid - b_min) if (b_mid - b_min) != 0 else 1 %}
+            {% set t = (v_b - b_min) / den %}
+            {% set r = (230 + (255 - 230) * t) | int %}
+            {% set g = (124 + (255 - 124) * t) | int %}
+            {% set b = (115 + (255 - 115) * t) | int %}
+            {% set b_col = 'rgb(' ~ r ~ ',' ~ g ~ ',' ~ b ~ ')' %}
+          {% else %}
+            {% set den = (b_max - b_mid) if (b_max - b_mid) != 0 else 1 %}
+            {% set t = (v_b - b_mid) / den %}
+            {% set r = (255 + (87  - 255) * t) | int %}
+            {% set g = (255 + (187 - 255) * t) | int %}
+            {% set b = (255 + (138 - 255) * t) | int %}
+            {% set b_col = 'rgb(' ~ r ~ ',' ~ g ~ ',' ~ b ~ ')' %}
+          {% endif %}
+          <td class="border border-black px-2 py-1 align-middle" style="background-color: {{ b_col }}">{{ v_b }}</td>
+
+          <td class="border border-black px-2 py-1 align-middle">{{ row.kendala or 0 }}</td>
+
+          {% set v_s = (row.saldo_akhir or 0)|int %}
+          {% if not has_sisa or s_max == s_min %}
+            {% set s_col = '#FFFFFF' %}
+          {% elif v_s <= s_mid %}
+            {% set den = (s_mid - s_min) if (s_mid - s_min) != 0 else 1 %}
+            {% set t = (v_s - s_min) / den %}
+            {% set r = (87  + (255 - 87 ) * t) | int %}
+            {% set g = (187 + (214 - 187) * t) | int %}
+            {% set b = (138 + (102 - 138) * t) | int %}
+            {% set s_col = 'rgb(' ~ r ~ ',' ~ g ~ ',' ~ b ~ ')' %}
+          {% else %}
+            {% set den = (s_max - s_mid) if (s_max - s_mid) != 0 else 1 %}
+            {% set t = (v_s - s_mid) / den %}
+            {% set r = (255 + (230 - 255) * t) | int %}
+            {% set g = (214 + (124 - 214) * t) | int %}
+            {% set b = (102 + (115 - 102) * t) | int %}
+            {% set s_col = 'rgb(' ~ r ~ ',' ~ g ~ ',' ~ b ~ ')' %}
+          {% endif %}
+          <td class="border border-black px-2 py-1 align-middle" style="background-color: {{ s_col }}">{{ v_s }}</td>
+        </tr>
         {% endfor %}
-        <td class="border border-black px-2 py-1 align-middle">
-          {{ data_dismantle | sum(attribute='berhasil') }}
-        </td>
-        <td class="border border-black px-2 py-1 align-middle">
-          {{ data_dismantle | sum(attribute='kendala') }}
-        </td>
-        <td class="border border-black px-2 py-1 align-middle">
-          {{ data_dismantle | sum(attribute='saldo_akhir') }}
-        </td>
-      </tr>
+
+        <tr class="font-bold bg-blue-500">
+          <td class="border border-black px-2 py-1 align-middle">{{ data_dismantle | sum(attribute='teknisi') }}</td>
+          <td colspan="2" class="border border-black bg-black text-white"></td>
+          <td class="border border-black px-2 py-1 align-middle">{{ data_dismantle | sum(attribute='berhasil_bulan_lalu') }}</td>
+          <td class="border border-black px-2 py-1 align-middle">{{ data_dismantle | sum(attribute='kendala_bulan_lalu') }}</td>
+          <td class="border border-black px-2 py-1 align-middle">{{ data_dismantle | sum(attribute='saldo_awal') }}</td>
+          <td class="border border-black px-2 py-1 align-middle">{{ data_dismantle | sum(attribute='progress') }}</td>
+          {% for i in range(1, 32) %}
+            <td class="border border-black px-1 py-1 align-middle">{{ data_dismantle | sum(attribute='t' ~ i) }}</td>
+          {% endfor %}
+          <td class="border border-black px-2 py-1 align-middle">{{ data_dismantle | sum(attribute='berhasil') }}</td>
+          <td class="border border-black px-2 py-1 align-middle">{{ data_dismantle | sum(attribute='kendala') }}</td>
+          <td class="border border-black px-2 py-1 align-middle">{{ data_dismantle | sum(attribute='saldo_akhir') }}</td>
+        </tr>
       {% else %}
-      <tr>
-        <td
-          colspan="42"
-          class="text-center py-2 border border-black bg-gray-50"
-        >
-          Belum ada data.
-        </td>
-      </tr>
+        <tr>
+          <td colspan="42" class="text-center py-2 border border-black bg-gray-50">Belum ada data.</td>
+        </tr>
       {% endif %}
     </tbody>
   </table>

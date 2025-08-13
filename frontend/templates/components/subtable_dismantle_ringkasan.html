@@ -8,55 +8,125 @@
       Capture
     </button>
   </div>
+
   <table
     id="dismantle_visit"
     class="min-w-full text-sm border border-black text-center align-middle whitespace-nowrap"
   >
     <thead class="text-xs">
       <tr class="font-bold">
-        <th rowspan="2" class="bg-blue-500 border border-black px-4 py-2 align-middle">
+        <th
+          rowspan="2"
+          class="bg-blue-500 border border-black px-4 py-2 align-middle"
+        >
           SERVICE AREA
         </th>
-        <th colspan="1" class="bg-Sky-500 border border-black px-4 py-1">
+        <th colspan="1" class="bg-blue-500 border border-black px-4 py-1">
           TOTAL VISIT
         </th>
-        <th colspan="1" class="bg-lime-600 border border-black px-4 py-1">
+        <th colspan="1" class="bg-green-600 border border-black px-4 py-1">
           DISMANTLE
         </th>
-        <th colspan="1" class="bg-rose-400 border border-black px-4 py-1">
+        <th colspan="1" class="bg-red-600 border border-black px-4 py-1">
           KENDALA
         </th>
-        <th colspan="1" class="bg-amber-600 border border-black px-4 py-1">
+        <th colspan="1" class="bg-yellow-50 border border-black px-4 py-1">
           SISA
         </th>
       </tr>
       <tr>
-        <th class="bg-yellow-50 border border-black px-4 py-1 font-medium">HI</th>
-        <th class="bg-yellow-50 border border-black px-4 py-1 font-medium">HI</th>
-        <th class="bg-yellow-50 border border-black px-4 py-1 font-medium">HI</th>
-        <th class="bg-Amber-600 border border-black px-4 py-1 font-bold">ASSIGN</th>
+        <th class="bg-yellow-50 border border-black px-4 py-1 font-medium">
+          HI
+        </th>
+        <th class="bg-yellow-50 border border-black px-4 py-1 font-medium">
+          HI
+        </th>
+        <th class="bg-yellow-50 border border-black px-4 py-1 font-medium">
+          HI
+        </th>
+        <th class="bg-yellow-50 border border-black px-4 py-1 font-bold">
+          ASSIGN
+        </th>
       </tr>
     </thead>
-    <tbody>
-      {% for row in visit_dismantle if not row.is_total %}
-      <tr>
-        <td class="border border-black px-2 py-1 text-left">{{ row.service_area }}</td>
-        <td class="border border-black px-2 py-1">{{ row.visit or 0 }}</td>
-        <td class="border border-black px-2 py-1">{{ row.dismantle or 0 }}</td>
-        <td class="border border-black px-2 py-1">{{ row.kendala or 0 }}</td>
-        <td class="border border-black px-2 py-1">{{ row.sisa_assign or 0 }}</td>
-      </tr>
-      {% endfor %}
 
-      {% for total in visit_dismantle if total.is_total %}
-      <tr class="bg-[#E6FBFF] font-semibold">
-        <td class="border border-black px-2 py-1 text-center align-middle">TOTAL</td>
-        <td class="border border-black px-2 py-1">{{ total.jumlah_visit or 0 }}</td>
-        <td class="border border-black px-2 py-1">{{ total.jumlah_dismantle or 0 }}</td>
-        <td class="border border-black px-2 py-1">{{ total.jumlah_kendala or 0 }}</td>
-        <td class="border border-black px-2 py-1">{{ total.jumlah_sisa_assign or 0 }}</td>
+    <tbody>
+      {% if visit_dismantle and visit_dismantle|length > 0 %} {% for row in
+      visit_dismantle if not row.is_total %}
+      <tr>
+        <td class="border border-black px-2 py-1 text-left">
+          {{ row.service_area }}
+        </td>
+
+        {# TOTAL VISIT: 0 -> merah, >0 -> putih #} {% set v_visit =
+        row.visit|default(0)|int %}
+        <td
+          class="border border-black px-2 py-1"
+          style="background-color: {{ '#E67C73' if v_visit == 0 else '#FFFFFF' }};"
+        >
+          {{ v_visit }}
+        </td>
+
+        {# DISMANTLE: 0 -> merah, >0 -> putih #} {% set v_dism =
+        row.dismantle|default(0)|int %}
+        <td
+          class="border border-black px-2 py-1"
+          style="background-color: {{ '#E67C73' if v_dism == 0 else '#FFFFFF' }};"
+        >
+          {{ v_dism }}
+        </td>
+
+        {# KENDALA: 0 -> merah, >0 -> putih #} {% set v_kend =
+        row.kendala|default(0)|int %}
+        <td
+          class="border border-black px-2 py-1"
+          style="background-color: {{ '#E67C73' if v_kend == 0 else '#FFFFFF' }};"
+        >
+          {{ v_kend }}
+        </td>
+
+        <td class="border border-black px-2 py-1">
+          {{ row.sisa_assign|default(0) }}
+        </td>
       </tr>
-      {% endfor %}
+      {% endfor %} {% for total in visit_dismantle if total.is_total %}
+      <tr class="bg-blue-400 font-semibold">
+        <td class="border border-black px-2 py-1 text-center align-middle">
+          TOTAL
+        </td>
+
+        {% set t_visit = total.jumlah_visit|default(0)|int %}
+        <td
+          class="border border-black px-2 py-1"
+        >
+          {{ t_visit }}
+        </td>
+
+        {% set t_dism = total.jumlah_dismantle|default(0)|int %}
+        <td
+          class="border border-black px-2 py-1"
+        >
+          {{ t_dism }}
+        </td>
+
+        {% set t_kend = total.jumlah_kendala|default(0)|int %}
+        <td
+          class="border border-black px-2 py-1"
+        >
+          {{ t_kend }}
+        </td>
+
+        <td class="border border-black px-2 py-1">
+          {{ total.jumlah_sisa_assign|default(0) }}
+        </td>
+      </tr>
+      {% endfor %} {% else %}
+      <tr>
+        <td colspan="5" class="border border-black px-2 py-2 text-gray-500">
+          Tidak ada data Visit Dismantle.
+        </td>
+      </tr>
+      {% endif %}
     </tbody>
   </table>
 </div>

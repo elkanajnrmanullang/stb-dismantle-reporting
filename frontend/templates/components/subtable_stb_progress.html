@@ -1,17 +1,29 @@
 {% set t_range = range(1, 32) %}
 <div class="overflow-auto">
   <div class="mb-2">
-    <button
-      onclick="captureTable('replacement_progress')"
-      class="text-sm bg-green-600 hover:bg-green-700 text-white px-3 py-1 rounded"
-    >
-      Capture
-    </button>
+    <button onclick="captureTable('replacement_progress')"
+      class="text-sm bg-green-600 hover:bg-green-700 text-white px-3 py-1 rounded">Capture</button>
   </div>
-  <table
-    id="replacement_progress"
-    class="min-w-full text-sm border border-black text-center align-middle whitespace-nowrap"
-  >
+
+  {% set rows_display = stb_progress
+    | rejectattr("is_total_row")
+    | rejectattr("service_area", "in", ["COLLECT","KENDALA","TOTAL VISIT HI","TOTAL"])
+    | list %}
+
+  {% set list_berhasil = rows_display | map(attribute="berhasil") | map('int') | list %}
+  {% set b_min = (list_berhasil|min) if list_berhasil else 0 %}
+  {% set b_max = (list_berhasil|max) if list_berhasil else 1 %}
+  {% set b_sorted = list_berhasil|sort %}
+  {% set b_mid = b_sorted[(b_sorted|length)//2] if b_sorted else 0 %}
+
+  {% set list_sisa = rows_display | map(attribute="saldo_akhir") | map('int') | list %}
+  {% set s_min = (list_sisa|min) if list_sisa else 0 %}
+  {% set s_max = (list_sisa|max) if list_sisa else 1 %}
+  {% set s_sorted = list_sisa|sort %}
+  {% set s_mid = s_sorted[(s_sorted|length)//2] if s_sorted else 0 %}
+
+  <table id="replacement_progress"
+    class="min-w-full text-sm border border-black text-center align-middle whitespace-nowrap">
     <thead class="text-xs">
       <tr>
         <th colspan="42" class="bg-yellow-300 font-bold border border-black py-2 text-lg">
@@ -19,30 +31,30 @@
         </th>
       </tr>
       <tr>
-        <th class="bg-red-300 border border-black px-2 py-1 w-[150px]">TOTAL TEKNISI</th>
-        <th colspan="2" class="bg-yellow-200 border border-black px-2 py-1 w-[180px]">REPLACEMENT STB</th>
-        <th class="bg-blue-200 text-black border border-black px-2 py-1 w-[70px]">SALDO</th>
+        <th class="bg-red-300 border border-black px-2 py-1 w-[150px]">JUMLAH</th>
+        <th colspan="2" class="bg-green-300 border border-black px-2 py-1 w-[180px]">REPLACEMENT STB</th>
+        <th class="bg-blue-400 text-black border border-black px-2 py-1 w-[70px]">SALDO</th>
         <th colspan="35" class="bg-cyan-200 border border-black px-1 py-1">PROGRES</th>
       </tr>
       <tr>
-        <th class="bg-white border border-black px-2 py-1">JUMLAH</th>
-        <th class="bg-green-200 border border-black px-2 py-1">SERVICE AREA</th>
+        <th class="bg-red-300 border border-black px-2 py-1">TEKNISI</th>
+        <th class="bg-green-300 border border-black px-2 py-1">SERVICE AREA</th>
         <th class="bg-green-300 border border-black px-2 py-1">STO</th>
-        <th class="bg-blue-200 border border-black px-2 py-1">AWAL</th>
+        <th class="bg-blue-400 border border-black px-2 py-1">AWAL</th>
         <th class="bg-yellow-200 border border-black px-2 py-1">ASSIGN</th>
         {% for i in t_range %}
-        <th class="bg-red-600 text-white border border-black px-2 py-1 w-[36px]">{{ i }}</th>
+          <th class="bg-red-600 text-white border border-black px-2 py-1 w-[36px]">{{ i }}</th>
         {% endfor %}
-        <th class="bg-green-200 border border-black px-2 py-1">Berhasil</th>
-        <th class="bg-orange-300 border border-black px-2 py-1">Kendala</th>
-        <th class="bg-orange-500 border border-black px-2 py-1">Sisa Saldo</th>
+        <th class="bg-green-400 border border-black px-2 py-1">Berhasil</th>
+        <th class="bg-red-400 border border-black px-2 py-1">Kendala</th>
+        <th class="bg-green-400 border border-black px-2 py-1">Sisa Saldo</th>
       </tr>
     </thead>
 
     <tbody class="text-sm">
       {% if stb_progress %}
         {% for row in stb_progress %}
-          {% if not row.is_total_row and row.service_area not in ['COLLECT', 'KENDALA', 'TOTAL VISIT HI'] %}
+          {% if not row.is_total_row and row.service_area not in ['COLLECT', 'KENDALA', 'TOTAL VISIT HI', 'TOTAL'] %}
           <tr>
             <td class="border border-black px-2 py-1">{{ row.teknisi }}</td>
             <td class="border border-black px-2 py-1">{{ row.service_area }}</td>
@@ -50,21 +62,65 @@
             <td class="border border-black px-2 py-1">{{ row.saldo_awal }}</td>
             <td class="border border-black px-2 py-1">{{ row.assign }}</td>
             {% for i in t_range %}
-            {% set val = getattr(row, 't' ~ i, 0) or 0 %}
-            <td class="border border-black px-1 py-1 {% if val > 0 %}bg-green-300{% endif %}">{{ val }}</td>
+              {% set val = getattr(row, 't' ~ i, 0) or 0 %}
+              <td class="border border-black px-1 py-1 {% if val > 0 %}bg-green-300{% endif %}">{{ val }}</td>
             {% endfor %}
-            <td class="border border-black px-2 py-1">{{ row.berhasil }}</td>
+
+            {% set vb = (row.berhasil or 0)|int %}
+            {% if b_max == b_min %}
+              {% set b_col = '#FFFFFF' %}
+            {% elif vb <= b_mid %}
+              {% set den = (b_mid - b_min) if (b_mid - b_min) != 0 else 1 %}
+              {% set t = (vb - b_min) / den %}
+              {% set r = (230 + (255 - 230) * t) | int %}
+              {% set g = (124 + (255 - 124) * t) | int %}
+              {% set b = (115 + (255 - 115) * t) | int %}
+              {% set b_col = 'rgb(' ~ r ~ ',' ~ g ~ ',' ~ b ~ ')' %}
+            {% else %}
+              {% set den = (b_max - b_mid) if (b_max - b_mid) != 0 else 1 %}
+              {% set t = (vb - b_mid) / den %}
+              {% set r = (255 + (87  - 255) * t) | int %}
+              {% set g = (255 + (187 - 255) * t) | int %}
+              {% set b = (255 + (138 - 255) * t) | int %}
+              {% set b_col = 'rgb(' ~ r ~ ',' ~ g ~ ',' ~ b ~ ')' %}
+            {% endif %}
+            <td class="border border-black px-2 py-1" style="background-color: {{ b_col }}">{{ vb }}</td>
+
             <td class="border border-black px-2 py-1">{{ row.kendala }}</td>
-            <td class="border border-black px-2 py-1">{{ row.saldo_akhir }}</td>
+
+            {% set vs = (row.saldo_akhir or 0)|int %}
+            {% if s_max == s_min %}
+              {% set s_col = '#FFFFFF' %}
+            {% elif vs <= s_mid %}
+              {% set den = (s_mid - s_min) if (s_mid - s_min) != 0 else 1 %}
+              {% set t = (vs - s_min) / den %}
+              {% set r = (87  + (255 - 87 ) * t) | int %}
+              {% set g = (187 + (214 - 187) * t) | int %}
+              {% set b = (138 + (102 - 138) * t) | int %}
+              {% set s_col = 'rgb(' ~ r ~ ',' ~ g ~ ',' ~ b ~ ')' %}
+            {% else %}
+              {% set den = (s_max - s_mid) if (s_max - s_mid) != 0 else 1 %}
+              {% set t = (vs - s_mid) / den %}
+              {% set r = (255 + (230 - 255) * t) | int %}
+              {% set g = (214 + (124 - 214) * t) | int %}
+              {% set b = (102 + (115 - 102) * t) | int %}
+              {% set s_col = 'rgb(' ~ r ~ ',' ~ g ~ ',' ~ b ~ ')' %}
+            {% endif %}
+            <td class="border border-black px-2 py-1" style="background-color: {{ s_col }}">{{ vs }}</td>
           </tr>
           {% endif %}
         {% endfor %}
       {% endif %}
 
-      {% set total_collect = stb_progress | selectattr("service_area", "equalto", "COLLECT") | list | first %}
-      {% set total_kendala = stb_progress | selectattr("service_area", "equalto", "KENDALA") | list | first %}
-      {% set total_visit_hi = stb_progress | selectattr("service_area", "equalto", "TOTAL VISIT HI") | list | first %}
       {% set total = stb_progress | selectattr("service_area", "equalto", "TOTAL") | list | first %}
+
+      {% set total_sisa = stb_progress
+        | rejectattr("is_total_row")
+        | rejectattr("service_area", "in", ["COLLECT","KENDALA","TOTAL VISIT HI","TOTAL"])
+        | map(attribute="saldo_akhir")
+        | select | sum %}
+
+      {% set ns = namespace(collect_sum=0, kendala_sum=0, visit_sum=0) %}
 
       <tr class="font-bold">
         <td class="border border-black bg-cyan-300 align-middle" rowspan="3">
@@ -77,49 +133,49 @@
 
         <td class="border border-black bg-green-500 text-black p-2">COLLECT</td>
         {% for i in t_range %}
-          {% set val = stb_progress
-            | rejectattr("is_total_row")
-            | rejectattr("service_area", "in", ["COLLECT", "KENDALA", "TOTAL VISIT HI"])
-            | map(attribute="t" ~ i)
-            | select
-            | sum %}
+          {% set val =
+              stb_progress
+                | rejectattr("is_total_row")
+                | rejectattr("service_area", "in", ["COLLECT","KENDALA","TOTAL VISIT HI","TOTAL"])
+                | map(attribute="t" ~ i)
+                | select | sum %}
+          {% set ns.collect_sum = ns.collect_sum + (val or 0) %}
           <td class="border border-black bg-green-300 text-black">{{ val }}</td>
         {% endfor %}
-        <td class="border border-black bg-green-500 text-black">
-          {{ total_collect.berhasil if total_collect else 0 }}
-        </td>
+        <td class="border border-black bg-green-500 text-black">{{ ns.collect_sum }}</td>
         <td class="border border-black bg-black"></td>
+
         <td rowspan="3" class="border border-black bg-orange-400 text-black">
-          {{ total.saldo_akhir if total else 0 }}
+          {{ total_sisa }}
         </td>
       </tr>
 
       <tr class="font-bold">
         <td class="border border-black bg-red-300 text-black p-2">KENDALA</td>
         {% for i in t_range %}
-        {% set val = getattr(total_kendala, 't' ~ i, 0) if total_kendala else 0 %}
-        <td class="border border-black bg-red-200">{{ val }}</td>
+          {% set v = kendala_harian['t' ~ i] if kendala_harian is defined else 0 %}
+          {% set ns.kendala_sum = ns.kendala_sum + (v or 0) %}
+          <td class="border border-black bg-red-200">{{ v }}</td>
         {% endfor %}
         <td class="border border-black bg-black"></td>
-        <td class="border border-black bg-red-300 text-black">
-          {{ total_kendala.kendala if total_kendala else 0 }}
-        </td>
+        <td class="border border-black bg-red-300 text-black">{{ ns.kendala_sum }}</td>
       </tr>
 
       <tr class="font-bold">
         <td class="border border-black bg-yellow-400 text-black p-2">TOTAL VISIT HI</td>
         {% for i in t_range %}
-        {% set val1 = getattr(total_collect, 't' ~ i, 0) if total_collect else 0 %}
-        {% set val2 = getattr(total_kendala, 't' ~ i, 0) if total_kendala else 0 %}
-        <td class="border border-black bg-yellow-200">
-          {{ val1 + val2 }}
-        </td>
+          {% set c = stb_progress
+              | rejectattr("is_total_row")
+              | rejectattr("service_area", "in", ["COLLECT","KENDALA","TOTAL VISIT HI","TOTAL"])
+              | map(attribute="t" ~ i)
+              | select | sum %}
+          {% set k = kendala_harian['t' ~ i] if kendala_harian is defined else 0 %}
+          {% set tot = (c or 0) + (k or 0) %}
+          {% set ns.visit_sum = ns.visit_sum + tot %}
+          <td class="border border-black bg-yellow-200">{{ tot }}</td>
         {% endfor %}
         <td colspan="2" class="border border-black bg-yellow-400 text-center text-black">
-          {{
-            (total_collect.berhasil if total_collect else 0) +
-            (total_kendala.kendala if total_kendala else 0)
-          }}
+          {{ ns.visit_sum }}
         </td>
       </tr>
     </tbody>

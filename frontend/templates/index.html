@@ -27,7 +27,6 @@
     <!-- Javascript -->
     <script src="{{ url_for('static', filename='js/app.js') }}"></script>
     <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
-
   </head>
 
   <body class="bg-gray-50 text-gray-800 font-sans">
@@ -72,5 +71,51 @@
     <footer class="text-center text-sm text-gray-500 mt-12 py-4">
       &copy; 2025 Telkom Akses Reporting System
     </footer>
+
+    <div
+      id="floating-navbar"
+      class="fixed top-0 left-0 right-0 bg-red-600 text-white shadow-md hidden z-50"
+    >
+      <div
+        class="max-w-7xl mx-auto flex space-x-4 px-4 py-2 overflow-x-auto text-sm"
+      >
+        <button
+          onclick="scrollToTable('dismantle_progress')"
+          class="hover:underline whitespace-nowrap"
+        >
+          Progress Dismantle
+        </button>
+        <button
+          onclick="scrollToTable('dismantle_kendala')"
+          class="hover:underline whitespace-nowrap"
+        >
+          Kendala Dismantle
+        </button>
+        <button
+          onclick="scrollToTable('replacement_progress')"
+          class="hover:underline whitespace-nowrap"
+        >
+          Progress STB
+        </button>
+        <button
+          onclick="scrollToTable('replacement_kendala')"
+          class="hover:underline whitespace-nowrap"
+        >
+          Kendala STB
+        </button>
+        <button
+          onclick="scrollToTable('dismantle_visit')"
+          class="hover:underline whitespace-nowrap"
+        >
+          Visit Dismantle
+        </button>
+        <button
+          onclick="scrollToTable('replacement_visit')"
+          class="hover:underline whitespace-nowrap"
+        >
+          Visit STB
+        </button>
+      </div>
+    </div>
   </body>
 </html>

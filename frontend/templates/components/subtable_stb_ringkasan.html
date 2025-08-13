@@ -7,75 +7,93 @@
       Capture
     </button>
   </div>
+
   <table
     id="replacement_visit"
     class="min-w-full text-sm border border-black text-center align-middle whitespace-nowrap"
   >
-    <thead class="text-xs">
+    <thead class="text-l font-bold">
       <tr>
         <th
           rowspan="2"
-          class="bg-white border border-black px-4 py-2 align-middle font-semibold"
+          class="bg-yellow-400 border border-black px-4 py-2 align-middle"
         >
           SERVICE AREA
         </th>
-        <th
-          colspan="1"
-          class="bg-[#FDF9E1] border border-black px-4 py-1 font-semibold"
-        >
+        <th colspan="1" class="bg-yellow-400 border border-black px-4 py-1">
           TOTAL VISIT
         </th>
-        <th
-          colspan="1"
-          class="bg-[#B9F7D0] border border-black px-4 py-1 font-semibold"
-        >
+        <th colspan="1" class="bg-green-400 border border-black px-4 py-1">
           DISMANTLE
         </th>
-        <th
-          colspan="1"
-          class="bg-[#FFD6D6] border border-black px-4 py-1 font-semibold"
-        >
+        <th colspan="1" class="bg-red-400 border border-black px-4 py-1">
           KENDALA
         </th>
-        <th
-          colspan="1"
-          class="bg-white border border-black px-4 py-1 font-semibold"
-        >
+        <th colspan="1" class="bg-yellow-400 border border-black px-4 py-1">
           SISA
         </th>
       </tr>
       <tr>
-        <th class="bg-[#FDF9E1] border border-black px-4 py-1 font-medium">HI</th>
-        <th class="bg-[#B9F7D0] border border-black px-4 py-1 font-medium">HI</th>
-        <th class="bg-[#FFD6D6] border border-black px-4 py-1 font-medium">HI</th>
-        <th class="bg-[#FDF9E1] border border-black px-4 py-1 font-bold">ASSIGN</th>
+        <th class="bg-yellow-200 border border-black px-4 py-1 font-medium">
+          HI
+        </th>
+        <th class="bg-yellow-200 border border-black px-4 py-1 font-medium">
+          HI
+        </th>
+        <th class="bg-yellow-200 border border-black px-4 py-1 font-medium">
+          HI
+        </th>
+        <th class="bg-yellow-400 border border-black px-4 py-1 font-bold">
+          ASSIGN
+        </th>
       </tr>
     </thead>
 
     <tbody>
-      {% if ringkasan_stb %}
-        {% for row in ringkasan_stb %}
-        <tr>
-          <td class="border border-black px-2 py-1 text-left">{{ row.service_area }}</td>
-          <td class="border border-black px-2 py-1">{{ row.total_visit }}</td>
-          <td class="border border-black px-2 py-1">{{ row.dismantle }}</td>
-          <td class="border border-black px-2 py-1">{{ row.kendala }}</td>
-          <td class="border border-black px-2 py-1">{{ row.sisa }}</td>
-        </tr>
-        {% endfor %}
-        <tr class="bg-[#E6FBFF] font-semibold">
-          <td class="border border-black px-2 py-1 text-center">TOTAL</td>
-          <td class="border border-black px-2 py-1">{{ total_visit }}</td>
-          <td class="border border-black px-2 py-1">{{ total_dismantle }}</td>
-          <td class="border border-black px-2 py-1">{{ total_kendala }}</td>
-          <td class="border border-black px-2 py-1">{{ total_sisa }}</td>
-        </tr>
+      {% if ringkasan_stb %} {% for row in ringkasan_stb %}
+      <tr>
+        <td class="border border-black px-2 py-1 text-left">
+          {{ row.service_area }}
+        </td>
+
+        <!-- Conditional Formatting -->
+        <td
+          class="border border-black px-2 py-1 {% if row.total_visit == 0 %}bg-red-300{% else %}bg-white{% endif %}"
+        >
+          {{ row.total_visit }}
+        </td>
+        <td
+          class="border border-black px-2 py-1 {% if row.dismantle == 0 %}bg-red-300{% else %}bg-white{% endif %}"
+        >
+          {{ row.dismantle }}
+        </td>
+        <td
+          class="border border-black px-2 py-1 {% if row.kendala == 0 %}bg-red-300{% else %}bg-white{% endif %}"
+        >
+          {{ row.kendala }}
+        </td>
+
+        <td class="border border-black px-2 py-1">{{ row.sisa }}</td>
+      </tr>
+      {% endfor %}
+
+      <!-- Total Row -->
+      <tr class="bg-yellow-400 font-semibold">
+        <td class="border border-black px-2 py-1 text-center">TOTAL</td>
+        <td class="border border-black px-2 py-1">{{ total_visit }}</td>
+        <td class="border border-black px-2 py-1">{{ total_dismantle }}</td>
+        <td class="border border-black px-2 py-1">{{ total_kendala }}</td>
+        <td class="border border-black px-2 py-1">{{ total_sisa }}</td>
+      </tr>
       {% else %}
-        <tr>
-          <td colspan="5" class="border border-black py-2 text-center text-gray-500">
-            Tidak ada data visit STB ditemukan.
-          </td>
-        </tr>
+      <tr>
+        <td
+          colspan="5"
+          class="border border-black py-2 text-center text-gray-500"
+        >
+          Tidak ada data visit STB ditemukan.
+        </td>
+      </tr>
       {% endif %}
     </tbody>
   </table>

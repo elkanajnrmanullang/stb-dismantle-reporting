@@ -2,15 +2,13 @@ import pandas as pd
 from datetime import datetime
 
 def process_dismantle_progress(df: pd.DataFrame, records: list, bulan: int, tahun: int):
-    # Pastikan parsing tanggal sukses (format dd/mm/yyyy 00:00)
     df['TANGGAL DISMANTLING'] = pd.to_datetime(
         df['TANGGAL DISMANTLING'], errors='coerce', dayfirst=True
     )
     df['bulan'] = df['TANGGAL DISMANTLING'].dt.month
     df['tahun'] = df['TANGGAL DISMANTLING'].dt.year
 
-    # Debug awal
-    print("✅ DEBUG TANGGAL")
+    print("DEBUG TANGGAL")
     print("Unik STATUS:", df['STATUS'].dropna().unique())
     print("Bulan unik:", df['bulan'].dropna().unique())
     print("Tahun unik:", df['tahun'].dropna().unique())
