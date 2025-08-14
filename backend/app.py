@@ -34,6 +34,9 @@ OUTPUT_FOLDER = '../outputs'
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 os.makedirs(OUTPUT_FOLDER, exist_ok=True)
 
+@app.route("/healthz")
+def healthz():
+    return {"status": "ok"}, 200
 
 # ===== Context Processors =====
 @app.context_processor
