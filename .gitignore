@@ -9,6 +9,7 @@ ENV/
 env/
 .venv/
 
+# Sensitive backend config
 backend/logic/database.py
 
 # Flask instance folder
@@ -38,6 +39,7 @@ static/exports/
 # Environment files
 .env
 .env.*
+.env.example  # <- tambahkan agar contoh env tidak ikut kalau berisi data asli
 
 # Python test cache
 .pytest_cache/
@@ -48,3 +50,21 @@ static/exports/
 
 # Jupyter Notebook Checkpoints
 .ipynb_checkpoints/
+
+# Temporary & cache folders
+tmp/
+temp/
+__temp__/
+
+# Exported reports or captures
+*.png
+*.jpg
+*.jpeg
+
+# Backup files
+*~
+*.bak
+*.old
+
+# Node modules (kalau ada frontend dengan npm/yarn)
+node_modules/
