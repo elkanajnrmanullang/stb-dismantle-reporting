@@ -1,7 +1,10 @@
-from logic.models import Base
-from logic.database import engine
+from logic.database import Base, engine
+from logic.models import (
+    ProgressDismantle, KendalaDismantle,
+    STBProgress, KendalaSTB,
+    VisitDismantle, VisitSTB,
+)
 
 if __name__ == "__main__":
-    print("Membuat semua tabel di database stb_reporting...")
     Base.metadata.create_all(bind=engine)
-    print("Tabel berhasil dibuat!")
+    print("✅ Tables created")
