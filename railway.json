@@ -9,7 +9,7 @@
   },
   "deploy": {
     "startCommand": "gunicorn backend.app:app --chdir backend --workers 2 --threads 4 --timeout 180 --bind 0.0.0.0:$PORT",
-    "healthcheckPath": "/",
+    "healthcheckPath": "/healthz",
     "restartPolicyType": "ON_FAILURE"
   }
 }
