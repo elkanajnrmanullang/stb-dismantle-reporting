@@ -4,6 +4,11 @@ import pandas as pd
 from datetime import datetime, timedelta
 from calendar import month_name
 from dotenv import load_dotenv
+
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))  # /app/backend
+if BASE_DIR not in sys.path:
+    sys.path.insert(0, BASE_DIR)
+    
 load_dotenv()
 
 from logic.processor import process_files, get_tanggal_list_from_output
