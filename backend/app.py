@@ -30,19 +30,20 @@ def healthz():
 
 # ===== Logic & DB Imports (setelah app dibuat) =====
 import pandas as pd
-from logic.processor import process_files, get_tanggal_list_from_output
-from logic.dismantle_progress import process_dismantle_progress
-from logic.rumus_dismantle_kendala import process_dismantle_kendala
-from logic.stb_progress import process_stb_progress, generate_stb_total_rows
-from logic.stb_kendala import process_kendala_stb, generate_kendala_stb_total_row
-from logic.visit_dismantle import process_visit_dismantle
-from logic.visit_stb import process_visit_stb
-from logic.database import SessionLocal
-from logic.models import (
+from backend.logic.processor import process_files, get_tanggal_list_from_output
+from backend.logic.dismantle_progress import process_dismantle_progress
+from backend.logic.rumus_dismantle_kendala import process_dismantle_kendala
+from backend.logic.stb_progress import process_stb_progress, generate_stb_total_rows
+from backend.logic.stb_kendala import process_kendala_stb, generate_kendala_stb_total_row
+from backend.logic.visit_dismantle import process_visit_dismantle
+from backend.logic.visit_stb import process_visit_stb
+from backend.logic.database import SessionLocal
+from backend.logic.models import (
     ProgressDismantle, KendalaDismantle,
     STBProgress, KendalaSTB,
     VisitDismantle, VisitSTB
 )
+
 
 # ==== Konfigurasi App ====
 app.secret_key = os.getenv("SECRET_KEY", "default_secret_key")
