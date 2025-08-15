@@ -1,16 +1,35 @@
 from flask import Flask, render_template, request, send_file, redirect, url_for, flash
 import os
-import pandas as pd
+import sys
 from datetime import datetime, timedelta
 from calendar import month_name
+
+from flask import Flask, render_template, request, send_file, redirect, url_for, flash
 from dotenv import load_dotenv
 
-BASE_DIR = os.path.dirname(os.path.abspath(__file__))  # /app/backend
-if BASE_DIR not in sys.path:
-    sys.path.insert(0, BASE_DIR)
-    
+# ==== ENV ====
 load_dotenv()
 
+# ==== PATH (kalau pakai impor dari root project) ====
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+PROJECT_ROOT = os.path.dirname(BASE_DIR)
+if PROJECT_ROOT not in sys.path:
+    sys.path.append(PROJECT_ROOT)
+
+# ==== FLASK APP (pakai template/static di folder frontend) ====
+app = Flask(
+    __name__,
+    template_folder='../frontend/templates',
+    static_folder='../frontend'
+)
+
+# Healthcheck untuk Railway
+@app.route("/healthz")
+def healthz():
+    return "ok", 200
+
+# ===== Logic & DB Imports (setelah app dibuat) =====
+import pandas as pd
 from logic.processor import process_files, get_tanggal_list_from_output
 from logic.dismantle_progress import process_dismantle_progress
 from logic.rumus_dismantle_kendala import process_dismantle_kendala
@@ -18,7 +37,6 @@ from logic.stb_progress import process_stb_progress, generate_stb_total_rows
 from logic.stb_kendala import process_kendala_stb, generate_kendala_stb_total_row
 from logic.visit_dismantle import process_visit_dismantle
 from logic.visit_stb import process_visit_stb
-
 from logic.database import SessionLocal
 from logic.models import (
     ProgressDismantle, KendalaDismantle,
@@ -26,24 +44,12 @@ from logic.models import (
     VisitDismantle, VisitSTB
 )
 
-app = Flask(
-    __name__,
-    template_folder='../frontend/templates',
-    static_folder='../frontend'
-)
-DATABASE_URL = os.getenv("DATABASE_URL")
-SECRET_KEY = os.getenv("SECRET_KEY")
+# ==== Konfigurasi App ====
 app.secret_key = os.getenv("SECRET_KEY", "default_secret_key")
-
-
 UPLOAD_FOLDER = '../uploads'
 OUTPUT_FOLDER = '../outputs'
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 os.makedirs(OUTPUT_FOLDER, exist_ok=True)
-
-@app.route("/healthz")
-def healthz():
-    return {"status": "ok"}, 200
 
 @app.context_processor
 def inject_request():
