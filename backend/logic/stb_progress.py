@@ -1,7 +1,6 @@
-# logic/stb_progress.py
 import pandas as pd
 from datetime import datetime
-from logic.models import STBProgress
+from .models import STBProgress
 
 
 def process_stb_progress(df: pd.DataFrame, records: list, bulan: int, tahun: int):

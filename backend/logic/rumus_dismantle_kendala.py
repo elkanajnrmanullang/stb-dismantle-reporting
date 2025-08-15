@@ -1,6 +1,6 @@
 import pandas as pd
 from datetime import datetime
-from logic.models import KendalaDismantle
+from .models import KendalaDismantle
 from logic.database import SessionLocal  # Tambahkan untuk commit langsung
 
 def process_dismantle_kendala(df: pd.DataFrame, records: list, progress_records: list, bulan: int, tahun: int):

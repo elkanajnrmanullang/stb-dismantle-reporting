@@ -1,8 +1,7 @@
-# logic/stb_kendala.py
 import pandas as pd
 from datetime import datetime
 from calendar import monthrange
-from logic.models import KendalaSTB
+from .models import KendalaSTB
 
 def _normalize_series(s: pd.Series) -> pd.Series:
     """

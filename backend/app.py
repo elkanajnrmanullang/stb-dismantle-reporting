@@ -29,7 +29,6 @@ def healthz():
     return "ok", 200
 
 # ===== Logic & DB Imports (setelah app dibuat) =====
-import pandas as pd
 from backend.logic.processor import process_files, get_tanggal_list_from_output
 from backend.logic.dismantle_progress import process_dismantle_progress
 from backend.logic.rumus_dismantle_kendala import process_dismantle_kendala
